@@ -1,0 +1,295 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+
+@theme {
+    --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+
+    /* ── Brand Palette ─────────────────────────── */
+    --color-brand-50:  #fdf4ff;
+    --color-brand-100: #fae8ff;
+    --color-brand-200: #f5d0fe;
+    --color-brand-300: #f0abfc;
+    --color-brand-400: #e879f9;
+    --color-brand-500: #d946ef;
+    --color-brand-600: #c026d3;
+    --color-brand-700: #a21caf;
+    --color-brand-800: #86198f;
+    --color-brand-900: #701a75;
+
+    /* ── Surface Palette (dark UI) ─────────────── */
+    --color-surface-50:  #f8f9ff;
+    --color-surface-900: #0f0f14;
+    --color-surface-800: #16161f;
+    --color-surface-700: #1e1e2a;
+    --color-surface-600: #27273a;
+    --color-surface-500: #32324a;
+    --color-surface-400: #4a4a6a;
+    --color-surface-300: #7070a0;
+    --color-surface-200: #a0a0c0;
+    --color-surface-100: #d0d0e0;
+
+    /* ── Status Colors ─────────────────────────── */
+    --color-success-500: #22c55e;
+    --color-success-100: #dcfce7;
+    --color-warning-500: #f59e0b;
+    --color-warning-100: #fef3c7;
+    --color-danger-500:  #ef4444;
+    --color-danger-100:  #fee2e2;
+    --color-info-500:    #3b82f6;
+    --color-info-100:    #dbeafe;
+}
+
+/* ── Base Styles ──────────────────────────────────── */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Scrollbar ────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #1e1e2a; }
+::-webkit-scrollbar-thumb { background: #4a4a6a; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #d946ef; }
+
+/* ── Glassmorphism Card ───────────────────────────── */
+.glass-card {
+    background: rgba(22, 22, 31, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* ── Gradient Text ────────────────────────────────── */
+.gradient-text {
+    background: linear-gradient(135deg, #d946ef 0%, #a855f7 50%, #6366f1 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* ── Brand Gradient Background ────────────────────── */
+.gradient-brand {
+    background: linear-gradient(135deg, #d946ef 0%, #a855f7 50%, #6366f1 100%);
+}
+
+/* ── Sidebar ──────────────────────────────────────── */
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.625rem 1rem;
+    border-radius: 0.625rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #a0a0c0;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+.sidebar-link:hover {
+    background: rgba(217, 70, 239, 0.1);
+    color: #e879f9;
+}
+.sidebar-link.active {
+    background: linear-gradient(135deg, rgba(217,70,239,0.2), rgba(99,102,241,0.2));
+    color: #e879f9;
+    border: 1px solid rgba(217, 70, 239, 0.3);
+}
+.sidebar-link .icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    flex-shrink: 0;
+}
+
+/* ── Stat Cards ───────────────────────────────────── */
+.stat-card {
+    background: #16161f;
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(217, 70, 239, 0.15);
+}
+
+/* ── Badge / Status ───────────────────────────────── */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.65rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+.badge-success  { background:#dcfce7; color:#15803d; }
+.badge-warning  { background:#fef3c7; color:#b45309; }
+.badge-danger   { background:#fee2e2; color:#b91c1c; }
+.badge-info     { background:#dbeafe; color:#1d4ed8; }
+.badge-purple   { background:rgba(217,70,239,0.15); color:#e879f9; }
+.badge-gray     { background:rgba(255,255,255,0.08); color:#a0a0c0; }
+
+/* ── Form Controls ────────────────────────────────── */
+.form-input {
+    width: 100%;
+    background: #1e1e2a;
+    border: 1px solid #32324a;
+    border-radius: 0.5rem;
+    padding: 0.625rem 0.875rem;
+    font-size: 0.875rem;
+    color: #f1f1f8;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    outline: none;
+}
+.form-input::placeholder { color: #7070a0; }
+.form-input:focus {
+    border-color: #d946ef;
+    box-shadow: 0 0 0 3px rgba(217, 70, 239, 0.15);
+}
+.form-label {
+    display: block;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: #a0a0c0;
+    margin-bottom: 0.375rem;
+}
+
+/* ── Buttons ──────────────────────────────────────── */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    border-radius: 0.625rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    white-space: nowrap;
+}
+.btn-primary {
+    background: linear-gradient(135deg, #d946ef, #a855f7);
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(217, 70, 239, 0.3);
+}
+.btn-primary:hover {
+    box-shadow: 0 6px 24px rgba(217, 70, 239, 0.45);
+    transform: translateY(-1px);
+}
+.btn-secondary {
+    background: #27273a;
+    color: #d0d0e0;
+    border: 1px solid #32324a;
+}
+.btn-secondary:hover { background: #32324a; color: #fff; }
+.btn-danger {
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+    border: 1px solid rgba(239,68,68,0.3);
+}
+.btn-danger:hover { background: rgba(239, 68, 68, 0.25); }
+.btn-sm { padding: 0.375rem 0.75rem; font-size: 0.8125rem; }
+.btn-icon { padding: 0.5rem; border-radius: 0.5rem; }
+
+/* ── Table ────────────────────────────────────────── */
+.data-table { width: 100%; border-collapse: collapse; }
+.data-table thead tr {
+    border-bottom: 1px solid #27273a;
+}
+.data-table thead th {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #7070a0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.data-table tbody tr {
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    transition: background 0.15s ease;
+}
+.data-table tbody tr:hover { background: rgba(255,255,255,0.025); }
+.data-table tbody td {
+    padding: 0.875rem 1rem;
+    font-size: 0.875rem;
+    color: #d0d0e0;
+}
+
+/* ── Modal ────────────────────────────────────────── */
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.modal-box {
+    background: #16161f;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 1.25rem;
+    padding: 2rem;
+    width: 100%;
+    max-width: 32rem;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.6);
+}
+
+/* ── Animations ───────────────────────────────────── */
+@keyframes fadeInUp {
+    from { opacity:0; transform:translateY(16px); }
+    to   { opacity:1; transform:translateY(0); }
+}
+.animate-fade-in-up { animation: fadeInUp 0.4s ease forwards; }
+
+@keyframes pulse-soft {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.6; }
+}
+.animate-pulse-soft { animation: pulse-soft 2s ease infinite; }
+
+/* ── Calendar ─────────────────────────────────────── */
+.calendar-slot {
+    min-height: 3.5rem;
+    border-radius: 0.5rem;
+    border: 1px solid transparent;
+    transition: all 0.15s ease;
+    cursor: pointer;
+}
+.calendar-slot:hover { border-color: rgba(217, 70, 239, 0.3); background: rgba(217,70,239,0.05); }
+.calendar-slot.occupied { background: rgba(217,70,239,0.15); border-color: rgba(217,70,239,0.4); }
+.calendar-slot.blocked  { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.3); }
+
+/* ── Appointment Status Colors ────────────────────── */
+.appt-pending    { border-left: 3px solid #f59e0b; }
+.appt-confirmed  { border-left: 3px solid #3b82f6; }
+.appt-completed  { border-left: 3px solid #22c55e; }
+.appt-cancelled  { border-left: 3px solid #ef4444; }
+.appt-no-show    { border-left: 3px solid #6b7280; }
+
+/* ── Webkit Calendar & Clock Picker Indicators Filter ── */
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    cursor: pointer;
+    opacity: 0.85;
+    transition: opacity 0.2s;
+}
+input[type="date"]::-webkit-calendar-picker-indicator:hover,
+input[type="time"]::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+}

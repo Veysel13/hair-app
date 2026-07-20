@@ -1,0 +1,24 @@
+{
+  "name": "HairApp Güzellik & Randevu",
+  "short_name": "HairApp",
+  "description": "Güzellik ve bakım randevunuz tek tıkla! Yakınındaki salonları keşfet, müsait saatini seç.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#16161f",
+  "theme_color": "#86198f",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
