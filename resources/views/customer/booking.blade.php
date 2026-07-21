@@ -147,9 +147,25 @@ if (window.Alpine) {
 <div x-data="bookingWizard">
 
     {{-- Başlık --}}
-    <div class="mb-6">
-        <h2 class="text-lg font-extrabold text-white">{{ $business->name }}</h2>
-        <p class="text-xs text-[#a0a0c0]">{{ $business->district }}, {{ $business->city }}</p>
+    <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-white/3 p-4 rounded-2xl border border-white/5">
+        <div>
+            <h2 class="text-lg font-extrabold text-white">{{ $business->name }}</h2>
+            <p class="text-xs text-[#a0a0c0] mt-0.5">{{ $business->district }}, {{ $business->city }}</p>
+        </div>
+        @if($business->instagram || $business->website)
+        <div class="flex flex-wrap gap-2 text-xs">
+            @if($business->instagram)
+            <a href="https://instagram.com/{{ $business->instagram }}" target="_blank" class="badge badge-purple flex items-center gap-1 font-bold transition-all hover:scale-105">
+                📸 <span>{{ '@' . $business->instagram }}</span>
+            </a>
+            @endif
+            @if($business->website)
+            <a href="{{ $business->website }}" target="_blank" class="badge badge-gray flex items-center gap-1 font-bold transition-all hover:scale-105">
+                🌐 <span>Web Sitesi</span>
+            </a>
+            @endif
+        </div>
+        @endif
     </div>
 
     {{-- Adım Göstergesi --}}

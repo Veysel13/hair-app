@@ -20,6 +20,15 @@ use Illuminate\View\View;
 
 class BookingController extends Controller
 {
+    public function showcase(string $slug): View
+    {
+        $business = Business::where('slug', $slug)
+            ->with(['hours', 'images', 'activeStaff', 'activeServices.category', 'visibleReviews.customer'])
+            ->firstOrFail();
+
+        return view('customer.showcase', compact('business'));
+    }
+
     public function show(Business $business): View
     {
         $business->load(['activeServices.category', 'activeStaff']);

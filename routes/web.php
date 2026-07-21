@@ -22,6 +22,7 @@ use App\Http\Controllers\Customer\ProfileController as CustomerProfileController
 // ── Müşteri Arayüzü (Ana Sayfa & Keşif) ──────────────
 Route::get('/', [CustomerHomeController::class, 'index'])->name('home');
 Route::get('/search', [CustomerSearchController::class, 'index'])->name('search');
+Route::get('/isletme/{slug}', [CustomerBookingController::class, 'showcase'])->name('business.showcase');
 
 // Rezervasyon Akışı
 Route::get('/book/{business}', [CustomerBookingController::class, 'show'])->name('book.show');

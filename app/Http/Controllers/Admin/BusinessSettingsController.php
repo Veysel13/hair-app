@@ -58,6 +58,7 @@ class BusinessSettingsController extends Controller
             'phone'              => ['required', 'string', 'max:20'],
             'email'              => ['nullable', 'email', 'max:100'],
             'website'            => ['nullable', 'string', 'max:100'],
+            'instagram'          => ['nullable', 'string', 'max:100'],
             'description'        => ['nullable', 'string'],
             'address'            => ['required', 'string', 'max:255'],
             'city'               => ['required', 'string', 'max:50'],
@@ -144,27 +145,35 @@ class BusinessSettingsController extends Controller
         $business = $this->getBusiness();
 
         $request->validate([
-            'image' => ['required', 'image', 'max:4096'],
+            'images' => ['required', 'array'],
+            'images.*' => ['image', 'max:4096'],
             'caption' => ['nullable', 'string', 'max:100'],
         ]);
 
-        if (!File::exists(public_path('uploads/gallery'))) {
-            File::makeDirectory(public_path('uploads/gallery'), 0755, true);
+        $businessId = $business->id;
+        $targetDir = "uploads/gallery/{$businessId}";
+
+        if (!File::exists(public_path($targetDir))) {
+            File::makeDirectory(public_path($targetDir), 0755, true);
         }
 
-        $file = $request->file('image');
-        $filename = time() . '_gallery_' . preg_replace('/[^a-zA-Z0-9_.]/', '', $file->getClientOriginalName());
-        $file->move(public_path('uploads/gallery'), $filename);
+        $files = $request->file('images');
+        $count = $business->images()->count();
 
-        BusinessImage::create([
-            'business_id' => $business->id,
-            'image_path'  => 'uploads/gallery/' . $filename,
-            'caption'     => $request->caption,
-            'sort_order'  => $business->images()->count() + 1,
-        ]);
+        foreach ($files as $file) {
+            $filename = time() . '_' . uniqid() . '_' . preg_replace('/[^a-zA-Z0-9_.]/', '', $file->getClientOriginalName());
+            $file->move(public_path($targetDir), $filename);
+
+            BusinessImage::create([
+                'business_id' => $businessId,
+                'image_path'  => "{$targetDir}/{$filename}",
+                'caption'     => $request->caption,
+                'sort_order'  => ++$count,
+            ]);
+        }
 
         return redirect()->route('admin.settings.edit')
-            ->with('success', 'Galeriye yeni görsel eklendi.');
+            ->with('success', 'Görseller galeriye başarıyla yüklendi.');
     }
 
     public function destroyImage(BusinessImage $image): RedirectResponse

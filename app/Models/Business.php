@@ -23,6 +23,7 @@ class Business extends Model
         'phone',
         'email',
         'website',
+        'instagram',
         'address',
         'city',
         'district',
