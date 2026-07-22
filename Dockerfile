@@ -1,8 +1,8 @@
 # --- Stage 1: Build Assets with Node.js ---
 FROM node:20-alpine AS node_builder
 WORKDIR /app
-COPY package*.json vite.config.js resources/ ./
-# If tailwind.config.js exists, copy it
+COPY package*.json vite.config.js ./
+COPY resources/ ./resources/
 COPY .env* ./
 RUN npm install && npm run build
 
