@@ -10,7 +10,7 @@ RUN npm ci && npm run build
 FROM php:8.3-fpm-alpine
 
 # Install system dependencies
-RUN apk add --no-deps --no-cache \
+RUN apk add --no-cache \
     nginx \
     supervisor \
     sqlite-dev \
