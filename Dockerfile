@@ -4,7 +4,7 @@ WORKDIR /app
 COPY package*.json vite.config.js resources/ ./
 # If tailwind.config.js exists, copy it
 COPY .env* ./
-RUN npm ci && npm run build
+RUN npm install && npm run build
 
 # --- Stage 2: Production Environment ---
 FROM php:8.3-fpm-alpine
