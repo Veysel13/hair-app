@@ -24,8 +24,8 @@ RUN apk add --no-cache \
 # Install PHP extensions
 RUN docker-php-ext-install pdo_sqlite zip opcache bcmath mbstring xml
 
-# Configure PHP-FPM to listen on a Unix socket
-RUN sed -i 's/listen = 9000/listen = \/var\/run\/php-fpm.sock/' /usr/local/etc/php-fpm.d/www.conf && \
+# Configure PHP-FPM to listen on a Unix socket in /tmp (writable by www-data)
+RUN sed -i 's/listen = 9000/listen = \/tmp\/php-fpm.sock/' /usr/local/etc/php-fpm.d/www.conf && \
     sed -i 's/;listen.mode = 0660/listen.mode = 0666/' /usr/local/etc/php-fpm.d/www.conf
 
 # Install Composer
