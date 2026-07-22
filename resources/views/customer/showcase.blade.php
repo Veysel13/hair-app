@@ -155,7 +155,15 @@
                                 <h5 class="text-xs font-bold text-white">{{ $s->name }}</h5>
                                 <p class="text-[10px] text-[#7070a0] mt-0.5">⏱️ {{ $s->duration_minutes }} dk</p>
                             </div>
-                            <span class="text-xs font-bold text-[#e879f9]">{{ number_format($s->price, 0, ',', '.') }} ₺</span>
+                            <div class="text-right">
+                                @if(isset($s->original_price) && $s->original_price > $s->price)
+                                <span class="text-[9px] text-[#7070a0] line-through block">{{ number_format($s->original_price, 0, ',', '.') }} ₺</span>
+                                <span class="text-xs font-bold text-green-400 block">{{ number_format($s->price, 0, ',', '.') }} ₺</span>
+                                <span class="text-[8px] bg-green-500/10 text-green-400 font-bold px-1.5 py-0.5 rounded-md mt-0.5 inline-block">{{ $s->discount_label }}</span>
+                                @else
+                                <span class="text-xs font-bold text-[#e879f9]">{{ number_format($s->price, 0, ',', '.') }} ₺</span>
+                                @endif
+                            </div>
                         </div>
                         @endforeach
                     </div>
@@ -202,6 +210,47 @@
                             <h4 class="text-xs font-bold text-white">{{ $member->name }}</h4>
                             <p class="text-[9px] text-[#7070a0] uppercase font-semibold mt-0.5">{{ $member->title ?? 'Uzman' }}</p>
                         </div>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+            @endif
+
+            {{-- Aktif Kampanyalar --}}
+            @if($business->activeCampaigns->isNotEmpty())
+            <div class="glass-card rounded-3xl p-6 sm:p-8 space-y-6">
+                <h3 class="text-base font-bold text-white flex items-center gap-2 border-b border-white/5 pb-3">
+                    <span>🔥</span> Aktif Kampanyalar & Fırsatlar
+                </h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    @foreach($business->activeCampaigns as $camp)
+                    <div class="p-5 rounded-2xl bg-gradient-to-br from-purple-500/10 to-pink-500/5 border border-purple-500/20 space-y-3 relative overflow-hidden group">
+                        {{-- Background Glow --}}
+                        <div class="absolute -right-10 -bottom-10 w-32 h-32 bg-purple-500/10 rounded-full blur-2xl group-hover:scale-125 transition-transform duration-500"></div>
+
+                        <div class="flex items-start justify-between gap-3">
+                            <div>
+                                <span class="badge badge-purple text-[9px] font-bold uppercase tracking-wider px-2 py-0.5">
+                                    {{ $camp->discount_type === 'percentage' ? '%' . number_format($camp->discount_value, 0) . ' İndirim' : number_format($camp->discount_value, 0) . ' ₺ İndirim' }}
+                                </span>
+                                <h4 class="text-sm font-extrabold text-white mt-1.5">{{ $camp->name }}</h4>
+                            </div>
+                            @if($camp->code)
+                            <div class="bg-white/5 border border-white/10 px-2.5 py-1 rounded-xl text-center">
+                                <p class="text-[8px] text-[#7070a0] font-bold uppercase">KOD</p>
+                                <p class="text-xs font-mono font-bold text-[#e879f9]">{{ $camp->code }}</p>
+                            </div>
+                            @endif
+                        </div>
+
+                        <p class="text-xs text-[#a0a0c0] leading-relaxed">{{ $camp->description }}</p>
+
+                        @if($camp->ends_at)
+                        <div class="pt-2 border-t border-white/5 flex items-center justify-between text-[10px] text-[#7070a0]">
+                            <span>⏳ Son Geçerlilik:</span>
+                            <span class="font-semibold text-white/70">{{ $camp->ends_at->format('d.m.Y H:i') }}</span>
+                        </div>
+                        @endif
                     </div>
                     @endforeach
                 </div>

@@ -1,7 +1,7 @@
 <?php
-
+ 
 namespace Tests\Feature;
-
+ 
 use App\Models\Business;
 use App\Models\Service;
 use App\Models\Staff;
@@ -10,21 +10,23 @@ use App\Models\User;
 use App\Models\Appointment;
 use App\Models\CustomerProfile;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Carbon;
 use Tests\TestCase;
-
+ 
 class BookingTest extends TestCase
 {
     use RefreshDatabase;
-
+ 
     private $business;
     private $staff;
     private $service;
     private $owner;
-
+ 
     protected function setUp(): void
     {
         parent::setUp();
-
+        Carbon::setTestNow('2026-07-20');
+ 
         // 1. Create a business owner
         $this->owner = User::create([
             'name' => 'Owner User',
@@ -76,6 +78,12 @@ class BookingTest extends TestCase
             'duration_minutes' => 45,
             'is_active' => true,
         ]);
+    }
+
+    protected function tearDown(): void
+    {
+        Carbon::setTestNow();
+        parent::tearDown();
     }
 
     public function test_can_retrieve_available_slots()

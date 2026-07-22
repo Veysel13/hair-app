@@ -88,11 +88,11 @@
 
                         <div>
                             <label class="form-label">Instagram Adresi</label>
-                            <div class="relative">
-                                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                                    <span class="text-[#7070a0] text-xs font-semibold">instagram.com/</span>
-                                </div>
-                                <input type="text" name="instagram" value="{{ old('instagram', $business->instagram) }}" class="form-input pl-[108px] text-xs" placeholder="kullanici_adi">
+                            <div class="flex rounded-lg overflow-hidden border border-white/10 focus-within:border-purple-500 transition-all bg-[#0f0f14]/50">
+                                <span class="bg-white/5 px-3.5 flex items-center text-[#7070a0] text-xs font-semibold select-none border-r border-white/10">
+                                    instagram.com/
+                                </span>
+                                <input type="text" name="instagram" value="{{ old('instagram', $business->instagram) }}" class="flex-1 bg-transparent border-0 outline-none px-3.5 py-2.5 text-white placeholder-white/20 text-xs focus:ring-0 focus:outline-none" placeholder="kullanici_adi">
                             </div>
                         </div>
 

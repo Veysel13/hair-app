@@ -206,13 +206,19 @@ if (window.Alpine) {
                                 <p class="text-sm font-medium text-white">{{ $s->name }}</p>
                                 <p class="text-[11px] text-[#7070a0] mt-0.5">{{ $s->duration_minutes }} dk</p>
                             </div>
-                            <div class="text-right">
-                                <p class="text-sm font-semibold text-[#e879f9]">{{ number_format($s->price, 0, ',', '.') }} ₺</p>
-                                <div :class="isServiceSelected({{ $s->id }}) ? 'opacity-100' : 'opacity-0'"
-                                     class="w-4 h-4 rounded-full gradient-brand flex items-center justify-center ml-auto mt-1 transition-opacity">
-                                    <svg class="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
-                                </div>
-                            </div>
+                             <div class="text-right">
+                                 @if(isset($s->original_price) && $s->original_price > $s->price)
+                                 <p class="text-[10px] text-[#7070a0] line-through">{{ number_format($s->original_price, 0, ',', '.') }} ₺</p>
+                                 <p class="text-sm font-semibold text-green-400">{{ number_format($s->price, 0, ',', '.') }} ₺</p>
+                                 <span class="text-[8px] bg-green-500/10 text-green-400 font-bold px-1.5 py-0.5 rounded-md mt-0.5 inline-block">{{ $s->discount_label }}</span>
+                                 @else
+                                 <p class="text-sm font-semibold text-[#e879f9]">{{ number_format($s->price, 0, ',', '.') }} ₺</p>
+                                 @endif
+                                 <div :class="isServiceSelected({{ $s->id }}) ? 'opacity-100' : 'opacity-0'"
+                                      class="w-4 h-4 rounded-full gradient-brand flex items-center justify-center ml-auto mt-1 transition-opacity">
+                                     <svg class="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                                 </div>
+                             </div>
                         </button>
                         @endforeach
                     </div>
