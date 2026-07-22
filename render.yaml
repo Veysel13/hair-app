@@ -1,0 +1,32 @@
+services:
+  - type: web
+    name: hair-app-web
+    runtime: docker
+    plan: starter # Persistent Disk requires Starter plan ($7/mo). Change to 'free' if deploying without persistent disk.
+    region: frankfurt # Or your preferred region (oregon, ohio, singapore, frankfurt)
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_KEY
+        generate: true
+      - key: DB_CONNECTION
+        value: sqlite
+      - key: DB_DATABASE
+        value: /var/www/html/database/data/database.sqlite
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: SESSION_DRIVER
+        value: cookie
+      - key: CACHE_STORE
+        value: file
+      - key: QUEUE_CONNECTION
+        value: sync
+
+    # SQLite persistence configuration
+    # Note: If plan is changed to 'free', remove the disk block below
+    disk:
+      name: sqlite-data
+      mountPath: /var/www/html/database/data
+      sizeGB: 1
