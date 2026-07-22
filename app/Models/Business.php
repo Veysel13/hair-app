@@ -23,6 +23,7 @@ class Business extends Model
         'phone',
         'email',
         'website',
+        'instagram',
         'address',
         'city',
         'district',
@@ -145,6 +146,18 @@ class Business extends Model
     public function campaigns(): HasMany
     {
         return $this->hasMany(Campaign::class);
+    }
+
+    public function activeCampaigns(): HasMany
+    {
+        return $this->hasMany(Campaign::class)
+            ->where('is_active', true)
+            ->where(function ($q) {
+                $q->whereNull('starts_at')->orWhere('starts_at', '<=', now());
+            })
+            ->where(function ($q) {
+                $q->whereNull('ends_at')->orWhere('ends_at', '>=', now());
+            });
     }
 
     public function waitlist(): HasMany

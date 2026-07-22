@@ -48,6 +48,14 @@
                         <div>
                             <label class="form-label">Salon Adı *</label>
                             <input type="text" name="name" value="{{ old('name', $business->name) }}" class="form-input" required>
+                            <div class="mt-1.5 flex items-center justify-between text-[11px] text-[#7070a0]">
+                                <span>
+                                    🔗 Tanıtım Sayfası Linki: <span class="text-white font-mono font-medium">/isletme/{{ $business->slug }}</span>
+                                </span>
+                                <a href="{{ route('business.showcase', $business->slug) }}" target="_blank" class="text-purple-400 hover:text-purple-300 font-bold flex items-center gap-1 transition-colors">
+                                    👁️ Sayfayı Önizle
+                                </a>
+                            </div>
                         </div>
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -75,6 +83,16 @@
                             <div>
                                 <label class="form-label">Web Sitesi</label>
                                 <input type="text" name="website" value="{{ old('website', $business->website) }}" class="form-input" placeholder="https://example.com">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="form-label">Instagram Adresi</label>
+                            <div class="flex rounded-lg overflow-hidden border border-white/10 focus-within:border-purple-500 transition-all bg-[#0f0f14]/50">
+                                <span class="bg-white/5 px-3.5 flex items-center text-[#7070a0] text-xs font-semibold select-none border-r border-white/10">
+                                    instagram.com/
+                                </span>
+                                <input type="text" name="instagram" value="{{ old('instagram', $business->instagram) }}" class="flex-1 bg-transparent border-0 outline-none px-3.5 py-2.5 text-white placeholder-white/20 text-xs focus:ring-0 focus:outline-none" placeholder="kullanici_adi">
                             </div>
                         </div>
 
@@ -246,15 +264,15 @@
             <form method="POST" action="{{ route('admin.settings.images.store') }}" enctype="multipart/form-data" class="flex flex-col sm:flex-row items-end gap-4">
                 @csrf
                 <div class="flex-1 w-full">
-                    <label class="form-label">Görsel Dosyası *</label>
-                    <input type="file" name="image" class="form-input text-xs" required>
+                    <label class="form-label">Görsel Dosyaları * (Çoklu seçebilirsiniz)</label>
+                    <input type="file" name="images[]" class="form-input text-xs" multiple required>
                 </div>
                 <div class="flex-1 w-full">
                     <label class="form-label">Başlık / Açıklama</label>
                     <input type="text" name="caption" class="form-input text-xs" placeholder="Örn: Salon İçi Görünüm">
                 </div>
                 <button type="submit" class="btn btn-primary whitespace-nowrap text-xs font-semibold py-2.5 px-5">
-                    Görseli Yükle 🚀
+                    Görselleri Yükle 🚀
                 </button>
             </form>
         </div>

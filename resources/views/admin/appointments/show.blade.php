@@ -51,6 +51,25 @@
                 </div>
             </div>
         </div>
+ 
+        {{-- Uygulanan Kampanya --}}
+        @if($appointment->campaignUsage)
+        <div class="glass-card rounded-2xl p-6 bg-gradient-to-br from-purple-500/10 to-pink-500/5 border border-purple-500/20">
+            <h3 class="text-sm font-semibold text-white mb-3 flex items-center gap-1.5">
+                <span>🔥</span> Uygulanan Kampanya
+            </h3>
+            <div class="flex items-start justify-between gap-3 flex-wrap">
+                <div>
+                    <h4 class="text-sm font-bold text-white">{{ $appointment->campaignUsage->campaign->name }}</h4>
+                    <p class="text-xs text-[#a0a0c0] mt-1">{{ $appointment->campaignUsage->campaign->description }}</p>
+                </div>
+                <div class="bg-purple-500/10 border border-purple-500/25 px-3 py-1.5 rounded-xl text-right">
+                    <p class="text-[10px] text-[#7070a0] font-bold uppercase">KAZANÇ</p>
+                    <p class="text-sm font-black text-green-400">{{ number_format($appointment->campaignUsage->discount_amount, 0, ',', '.') }} ₺ İndirim</p>
+                </div>
+            </div>
+        </div>
+        @endif
 
         {{-- Ödemeler --}}
         @if($appointment->payments->count())

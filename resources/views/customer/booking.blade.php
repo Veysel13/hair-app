@@ -147,9 +147,25 @@ if (window.Alpine) {
 <div x-data="bookingWizard">
 
     {{-- Başlık --}}
-    <div class="mb-6">
-        <h2 class="text-lg font-extrabold text-white">{{ $business->name }}</h2>
-        <p class="text-xs text-[#a0a0c0]">{{ $business->district }}, {{ $business->city }}</p>
+    <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-white/3 p-4 rounded-2xl border border-white/5">
+        <div>
+            <h2 class="text-lg font-extrabold text-white">{{ $business->name }}</h2>
+            <p class="text-xs text-[#a0a0c0] mt-0.5">{{ $business->district }}, {{ $business->city }}</p>
+        </div>
+        @if($business->instagram || $business->website)
+        <div class="flex flex-wrap gap-2 text-xs">
+            @if($business->instagram)
+            <a href="https://instagram.com/{{ $business->instagram }}" target="_blank" class="badge badge-purple flex items-center gap-1 font-bold transition-all hover:scale-105">
+                📸 <span>{{ '@' . $business->instagram }}</span>
+            </a>
+            @endif
+            @if($business->website)
+            <a href="{{ $business->website }}" target="_blank" class="badge badge-gray flex items-center gap-1 font-bold transition-all hover:scale-105">
+                🌐 <span>Web Sitesi</span>
+            </a>
+            @endif
+        </div>
+        @endif
     </div>
 
     {{-- Adım Göstergesi --}}
@@ -190,13 +206,19 @@ if (window.Alpine) {
                                 <p class="text-sm font-medium text-white">{{ $s->name }}</p>
                                 <p class="text-[11px] text-[#7070a0] mt-0.5">{{ $s->duration_minutes }} dk</p>
                             </div>
-                            <div class="text-right">
-                                <p class="text-sm font-semibold text-[#e879f9]">{{ number_format($s->price, 0, ',', '.') }} ₺</p>
-                                <div :class="isServiceSelected({{ $s->id }}) ? 'opacity-100' : 'opacity-0'"
-                                     class="w-4 h-4 rounded-full gradient-brand flex items-center justify-center ml-auto mt-1 transition-opacity">
-                                    <svg class="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
-                                </div>
-                            </div>
+                             <div class="text-right">
+                                 @if(isset($s->original_price) && $s->original_price > $s->price)
+                                 <p class="text-[10px] text-[#7070a0] line-through">{{ number_format($s->original_price, 0, ',', '.') }} ₺</p>
+                                 <p class="text-sm font-semibold text-green-400">{{ number_format($s->price, 0, ',', '.') }} ₺</p>
+                                 <span class="text-[8px] bg-green-500/10 text-green-400 font-bold px-1.5 py-0.5 rounded-md mt-0.5 inline-block">{{ $s->discount_label }}</span>
+                                 @else
+                                 <p class="text-sm font-semibold text-[#e879f9]">{{ number_format($s->price, 0, ',', '.') }} ₺</p>
+                                 @endif
+                                 <div :class="isServiceSelected({{ $s->id }}) ? 'opacity-100' : 'opacity-0'"
+                                      class="w-4 h-4 rounded-full gradient-brand flex items-center justify-center ml-auto mt-1 transition-opacity">
+                                     <svg class="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                                 </div>
+                             </div>
                         </button>
                         @endforeach
                     </div>

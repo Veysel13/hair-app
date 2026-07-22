@@ -14,7 +14,7 @@ class UserSeeder extends Seeder
         User::create([
             'name'     => 'Admin Kullanıcı',
             'email'    => 'admin@hairapp.com',
-            'password' => Hash::make('password'),
+            'password' => Hash::make('123456'),
             'role'     => 'admin',
             'phone'    => '05001234567',
             'notification_preferences' => ['sms' => true, 'email' => true, 'whatsapp' => false],
@@ -24,7 +24,7 @@ class UserSeeder extends Seeder
         User::create([
             'name'       => 'Ayşe Kaya',
             'email'      => 'ayse@luxhair.com',
-            'password'   => Hash::make('password'),
+            'password'   => Hash::make('123456'),
             'role'       => 'business_owner',
             'phone'      => '05321234567',
             'birth_date' => '1985-03-15',
@@ -34,7 +34,7 @@ class UserSeeder extends Seeder
         User::create([
             'name'       => 'Mehmet Demir',
             'email'      => 'mehmet@demirbarber.com',
-            'password'   => Hash::make('password'),
+            'password'   => Hash::make('123456'),
             'role'       => 'business_owner',
             'phone'      => '05421234567',
             'birth_date' => '1980-07-22',
@@ -44,7 +44,7 @@ class UserSeeder extends Seeder
         User::create([
             'name'       => 'Zeynep Arslan',
             'email'      => 'zeynep@nailtopia.com',
-            'password'   => Hash::make('password'),
+            'password'   => Hash::make('123456'),
             'role'       => 'business_owner',
             'phone'      => '05531234567',
             'birth_date' => '1990-11-08',
@@ -77,7 +77,7 @@ class UserSeeder extends Seeder
 
         foreach ($customers as $customer) {
             User::create(array_merge($customer, [
-                'password' => Hash::make('password'),
+                'password' => Hash::make('123456'),
                 'role'     => 'customer',
                 'notification_preferences' => ['sms' => true, 'email' => true, 'whatsapp' => true],
             ]));
