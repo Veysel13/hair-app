@@ -15,7 +15,6 @@
     },
     "dependencies": {
         "@alpinejs/intersect": "^3.15.12",
-        "@rolldown/binding-darwin-arm64": "^1.1.5",
         "alpinejs": "^3.15.12",
         "chart.js": "^4.5.1"
     }
