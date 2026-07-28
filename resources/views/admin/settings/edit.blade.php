@@ -190,6 +190,21 @@
                         </div>
                     </div>
 
+                    {{-- Personel Prim & Hak Ediş Ayarları --}}
+                    <div class="glass-card rounded-2xl p-6 space-y-4">
+                        <h3 class="text-sm font-semibold text-white flex items-center gap-2">
+                            <span>💰</span> Personel Prim & Hak Ediş Sistemi
+                        </h3>
+                        
+                        <label class="flex items-center gap-3 p-3 rounded-xl bg-purple-500/10 border border-purple-500/20 cursor-pointer transition-colors">
+                            <input type="checkbox" name="enable_commission" value="1" class="accent-purple-500 w-5 h-5" {{ $business->enable_commission ? 'checked' : '' }}>
+                            <div>
+                                <p class="text-xs font-bold text-white">Personel Prim Sistemini Etkinleştir</p>
+                                <p class="text-[10px] text-[#a0a0c0]">Personellere randevulardan ciro bazlı prim (hak ediş) hesaplamasını ve raporlarını aktif eder.</p>
+                            </div>
+                        </label>
+                    </div>
+
                     {{-- Kaydet Butonu --}}
                     <button type="submit" class="btn btn-primary w-full py-3 font-semibold shadow-lg shadow-purple-500/20 text-xs">
                         Ayarları Kaydet 🎉

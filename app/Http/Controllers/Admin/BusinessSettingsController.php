@@ -64,6 +64,7 @@ class BusinessSettingsController extends Controller
             'city'               => ['required', 'string', 'max:50'],
             'district'           => ['required', 'string', 'max:50'],
             'deposit_required'   => ['nullable', 'boolean'],
+            'enable_commission'  => ['nullable', 'boolean'],
             'deposit_percentage' => ['nullable', 'integer', 'min:0', 'max:100'],
             'cancellation_hours' => ['required', 'integer', 'min:0', 'max:168'],
             'latitude'           => ['nullable', 'numeric'],
@@ -72,7 +73,8 @@ class BusinessSettingsController extends Controller
             'cover_image'        => ['nullable', 'image', 'max:4096'],
         ]);
 
-        $data['deposit_required'] = $request->has('deposit_required');
+        $data['deposit_required']  = $request->has('deposit_required');
+        $data['enable_commission'] = $request->has('enable_commission');
 
         // File upload directories check
         if (!File::exists(public_path('uploads/logos'))) {

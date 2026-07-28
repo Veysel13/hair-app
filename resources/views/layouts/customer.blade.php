@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'HairApp') — Saç & Güzellik Randevusu</title>
+    <title>@yield('title', 'Salonim') — Saç & Güzellik Randevusu</title>
     <link rel="manifest" href="/manifest.json">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('head')
@@ -12,36 +12,41 @@
 <body class="bg-[#0f0f14] text-[#f1f1f8] min-h-screen flex flex-col font-sans pb-20 lg:pb-0">
 
     {{-- Top Header --}}
-    <header class="sticky top-0 z-40 bg-[#0f0f14]/80 backdrop-blur-md border-b border-white/5 h-16">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
-            <a href="{{ route('home') }}" class="flex items-center gap-2">
-                <div class="w-8 h-8 rounded-xl gradient-brand flex items-center justify-center text-white">
-                    <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+    <header class="sticky top-0 z-40 bg-[#0f0f14]/90 backdrop-blur-md border-b border-white/5 h-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between gap-2">
+            <a href="{{ route('home') }}" class="flex items-center gap-2.5 flex-shrink-0">
+                <div class="w-9 h-9 rounded-xl gradient-brand flex items-center justify-center text-white flex-shrink-0 shadow-md shadow-purple-500/20">
+                    <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="6" cy="6" r="2.5" />
+                        <circle cx="6" cy="18" r="2.5" />
+                        <path d="M8.2 7.8L19 18.5" />
+                        <path d="M8.2 16.2L12 12.4" />
+                        <path d="M14.8 9.6L19 5.5" />
+                        <path d="M17 10L17.6 11.4L19 12L17.6 12.6L17 14L16.4 12.6L15 12L16.4 11.4L17 10Z" fill="currentColor" stroke="none" />
                     </svg>
                 </div>
-                <span class="text-lg font-extrabold gradient-text">HairApp</span>
+                <span class="text-lg font-extrabold gradient-text whitespace-nowrap">Salonim</span>
             </a>
 
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-1.5 sm:gap-3 flex-shrink-0">
                 @auth
                 @if(Auth::user()->role === 'business_owner' || Auth::user()->role === 'admin')
-                <a href="{{ route('admin.dashboard') }}" class="text-xs text-[#e879f9] hover:underline font-bold mr-2 flex items-center gap-1">
-                    ⚙️ Yönetim Paneli
+                <a href="{{ route('admin.dashboard') }}" class="text-xs text-[#e879f9] hover:underline font-bold flex items-center gap-1 whitespace-nowrap px-1">
+                    ⚙️ <span class="hidden sm:inline">Yönetim Paneli</span><span class="sm:hidden">Panel</span>
                 </a>
                 @endif
-                <a href="{{ route('customer.dashboard') }}" class="flex items-center gap-2 hover:bg-white/5 px-2.5 py-1.5 rounded-xl transition-all">
-                    <div class="w-7 h-7 rounded-lg gradient-brand flex items-center justify-center text-white text-xs font-bold">
+                <a href="{{ route('customer.dashboard') }}" class="flex items-center gap-2 hover:bg-white/5 px-2 py-1.5 rounded-xl transition-all whitespace-nowrap">
+                    <div class="w-7 h-7 rounded-lg gradient-brand flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
                         {{ substr(Auth::user()->name, 0, 1) }}
                     </div>
                     <span class="text-xs font-semibold text-white hidden sm:inline">{{ Auth::user()->name }}</span>
                 </a>
                 @else
-                <a href="{{ route('login') }}" class="text-xs text-[#a0a0c0] hover:text-white transition-colors mr-2 flex items-center gap-1 font-semibold">
-                    💼 Salon Girişi
+                <a href="{{ route('login') }}" class="text-[11px] sm:text-xs text-[#a0a0c0] hover:text-white transition-colors flex items-center gap-1 font-semibold whitespace-nowrap border border-white/10 px-2 py-1 rounded-lg hover:border-purple-500/30">
+                    <span>💼</span> <span class="hidden sm:inline">Salon Girişi</span><span class="sm:hidden">İşletme</span>
                 </a>
-                <a href="{{ route('customer.login') }}" class="btn btn-secondary btn-sm">Giriş Yap</a>
-                <a href="{{ route('customer.register') }}" class="btn btn-primary btn-sm hidden sm:inline-flex">Kayıt Ol</a>
+                <a href="{{ route('customer.login') }}" class="btn btn-secondary btn-sm text-xs whitespace-nowrap py-1.5 px-3">Giriş Yap</a>
+                <a href="{{ route('customer.register') }}" class="btn btn-primary btn-sm text-xs whitespace-nowrap hidden md:inline-flex">Kayıt Ol</a>
                 @endauth
             </div>
         </div>

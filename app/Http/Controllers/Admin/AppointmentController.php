@@ -105,8 +105,23 @@ class AppointmentController extends Controller
 
     public function show(Appointment $appointment)
     {
-        $appointment->load(['customer', 'staff', 'services.service', 'payments', 'review', 'campaignUsage.campaign']);
-        return view('admin.appointments.show', compact('appointment'));
+        $appointment->load([
+            'customer', 
+            'staff', 
+            'services.service', 
+            'payments', 
+            'review', 
+            'campaignUsage.campaign',
+            'treatmentRecords.service',
+            'treatmentRecords.staff'
+        ]);
+
+        $customerProfile = \App\Models\CustomerProfile::firstOrCreate([
+            'business_id' => $appointment->business_id,
+            'customer_id' => $appointment->customer_id,
+        ]);
+
+        return view('admin.appointments.show', compact('appointment', 'customerProfile'));
     }
 
     public function updateStatus(Request $request, Appointment $appointment)
@@ -118,6 +133,92 @@ class AppointmentController extends Controller
             $appointment->update(['cancelled_at' => now(), 'cancellation_reason' => $request->reason]);
         }
 
+        // Müşteri profili istatistiklerini otomatik güncelle
+        $profile = \App\Models\CustomerProfile::firstOrCreate([
+            'business_id' => $appointment->business_id,
+            'customer_id' => $appointment->customer_id,
+        ]);
+        
+        $completedAppts = Appointment::where('business_id', $appointment->business_id)
+            ->where('customer_id', $appointment->customer_id)
+            ->where('status', 'completed');
+
+        $profile->update([
+            'total_visits' => $completedAppts->count(),
+            'total_spent'  => $completedAppts->sum('total_price'),
+            'last_visit_at'=> $completedAppts->max('appointment_date') ?? $profile->last_visit_at,
+        ]);
+
         return back()->with('success', 'Randevu durumu güncellendi.');
+    }
+
+    public function checkout(Request $request, Appointment $appointment)
+    {
+        $request->validate([
+            'payment_method' => 'required|in:cash,card,split,online',
+            'cash_amount'    => 'nullable|numeric|min:0',
+            'card_amount'    => 'nullable|numeric|min:0',
+            'tip_amount'     => 'nullable|numeric|min:0',
+            'internal_notes' => 'nullable|string',
+        ]);
+
+        $paymentMethod = $request->payment_method;
+        $totalPrice    = (float) $appointment->total_price;
+        $cashAmount    = 0.0;
+        $cardAmount    = 0.0;
+        $tipAmount     = (float) ($request->tip_amount ?? 0);
+
+        if ($paymentMethod === 'cash') {
+            $cashAmount = $totalPrice;
+        } elseif ($paymentMethod === 'card') {
+            $cardAmount = $totalPrice;
+        } elseif ($paymentMethod === 'split') {
+            $cashAmount = (float) ($request->cash_amount ?? 0);
+            $cardAmount = (float) ($request->card_amount ?? 0);
+        } else {
+            $cardAmount = $totalPrice;
+        }
+
+        $appointment->update([
+            'status'         => 'completed',
+            'payment_method' => $paymentMethod,
+            'cash_amount'    => $cashAmount,
+            'card_amount'    => $cardAmount,
+            'tip_amount'     => $tipAmount,
+            'completed_at'   => now(),
+            'internal_notes' => $request->internal_notes ? $request->internal_notes : $appointment->internal_notes,
+        ]);
+
+        // Ödeme kaydı oluştur/güncelle
+        \App\Models\Payment::updateOrCreate([
+            'appointment_id' => $appointment->id,
+        ], [
+            'business_id'    => $appointment->business_id,
+            'customer_id'    => $appointment->customer_id,
+            'amount'         => $totalPrice + $tipAmount,
+            'type'           => 'full',
+            'method'         => $paymentMethod === 'card' ? 'credit_card' : ($paymentMethod === 'split' ? 'cash' : $paymentMethod),
+            'status'         => 'completed',
+            'paid_at'        => now(),
+            'notes'          => "Adisyon Kapatıldı. Nakit: {$cashAmount}₺, Kart: {$cardAmount}₺, Bahşiş: {$tipAmount}₺",
+        ]);
+
+        // Müşteri profili istatistiklerini güncelle
+        $profile = \App\Models\CustomerProfile::firstOrCreate([
+            'business_id' => $appointment->business_id,
+            'customer_id' => $appointment->customer_id,
+        ]);
+        
+        $completedAppts = Appointment::where('business_id', $appointment->business_id)
+            ->where('customer_id', $appointment->customer_id)
+            ->where('status', 'completed');
+
+        $profile->update([
+            'total_visits' => $completedAppts->count(),
+            'total_spent'  => $completedAppts->sum('total_price'),
+            'last_visit_at'=> now(),
+        ]);
+
+        return back()->with('success', 'Adisyon başarıyla kapatıldı ve ödeme alındı! 💰');
     }
 }

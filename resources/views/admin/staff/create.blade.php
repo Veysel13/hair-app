@@ -13,7 +13,10 @@
                 <div><label class="form-label">Unvan</label><input type="text" name="title" value="{{ old('title') }}" class="form-input" placeholder="Uzman Kuaför"></div>
             </div>
             <div><label class="form-label">Hakkında</label><textarea name="bio" rows="3" class="form-input">{{ old('bio') }}</textarea></div>
-            <div><label class="form-label">Görüntülenme Sırası</label><input type="number" name="display_order" value="{{ old('display_order',0) }}" min="0" class="form-input w-32"></div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div><label class="form-label">Görüntülenme Sırası</label><input type="number" name="display_order" value="{{ old('display_order',0) }}" min="0" class="form-input"></div>
+                <div><label class="form-label">Varsayılan Prim Oranı (%)</label><input type="number" name="commission_rate" value="{{ old('commission_rate',30) }}" min="0" max="100" step="0.5" class="form-input" placeholder="Örn: 30"></div>
+            </div>
         </div>
         <div class="glass-card rounded-2xl p-6">
             <h3 class="text-sm font-semibold text-white mb-3">Verebileceği Hizmetler</h3>

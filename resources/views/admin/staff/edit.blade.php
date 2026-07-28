@@ -23,10 +23,14 @@
                 <label class="form-label">Hakkında</label>
                 <textarea name="bio" rows="3" class="form-input">{{ old('bio', $staff->bio) }}</textarea>
             </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
                     <label class="form-label">Görüntülenme Sırası</label>
-                    <input type="number" name="display_order" value="{{ old('display_order', $staff->display_order) }}" min="0" class="form-input w-32">
+                    <input type="number" name="display_order" value="{{ old('display_order', $staff->display_order) }}" min="0" class="form-input">
+                </div>
+                <div>
+                    <label class="form-label">Varsayılan Prim Oranı (%)</label>
+                    <input type="number" name="commission_rate" value="{{ old('commission_rate', $staff->commission_rate ?? 30) }}" min="0" max="100" step="0.5" class="form-input" placeholder="Örn: 30">
                 </div>
                 <div>
                     <label class="form-label">Durum</label>

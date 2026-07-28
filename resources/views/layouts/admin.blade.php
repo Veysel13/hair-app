@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Panel') — HairApp Admin</title>
+    <title>@yield('title', 'Panel') — Salonim Admin</title>
     <link rel="manifest" href="/manifest.json">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('head')
@@ -18,13 +18,18 @@
 
         {{-- Logo --}}
         <div class="flex items-center gap-3 p-5 border-b border-white/5" style="min-height:4.5rem;">
-            <div class="w-9 h-9 rounded-xl gradient-brand flex items-center justify-center flex-shrink-0">
-                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            <div class="w-9 h-9 rounded-xl gradient-brand flex items-center justify-center flex-shrink-0 shadow-md shadow-purple-500/20">
+                <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="6" cy="6" r="2.5" />
+                    <circle cx="6" cy="18" r="2.5" />
+                    <path d="M8.2 7.8L19 18.5" />
+                    <path d="M8.2 16.2L12 12.4" />
+                    <path d="M14.8 9.6L19 5.5" />
+                    <path d="M17 10L17.6 11.4L19 12L17.6 12.6L17 14L16.4 12.6L15 12L16.4 11.4L17 10Z" fill="currentColor" stroke="none" />
                 </svg>
             </div>
             <div x-show="sidebarOpen" x-transition.opacity class="overflow-hidden">
-                <span class="text-base font-bold gradient-text whitespace-nowrap">HairApp</span>
+                <span class="text-base font-bold gradient-text whitespace-nowrap">Salonim</span>
                 <p class="text-[10px] text-[#7070a0] whitespace-nowrap">Admin Panel</p>
             </div>
         </div>
@@ -58,12 +63,17 @@
            x-transition:leave-start="translate-x-0" x-transition:leave-end="-translate-x-full"
            class="fixed top-0 left-0 h-full w-64 bg-[#16161f] border-r border-white/5 z-30 flex flex-col lg:hidden">
         <div class="flex items-center gap-3 p-5 border-b border-white/5">
-            <div class="w-9 h-9 rounded-xl gradient-brand flex items-center justify-center">
-                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            <div class="w-9 h-9 rounded-xl gradient-brand flex items-center justify-center shadow-md shadow-purple-500/20">
+                <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="6" cy="6" r="2.5" />
+                    <circle cx="6" cy="18" r="2.5" />
+                    <path d="M8.2 7.8L19 18.5" />
+                    <path d="M8.2 16.2L12 12.4" />
+                    <path d="M14.8 9.6L19 5.5" />
+                    <path d="M17 10L17.6 11.4L19 12L17.6 12.6L17 14L16.4 12.6L15 12L16.4 11.4L17 10Z" fill="currentColor" stroke="none" />
                 </svg>
             </div>
-            <span class="text-base font-bold gradient-text">HairApp</span>
+            <span class="text-base font-bold gradient-text">Salonim</span>
         </div>
         <nav class="flex-1 p-3 overflow-y-auto space-y-1">
             @include('layouts.partials.sidebar-nav')
@@ -99,19 +109,11 @@
                             headers: {
                                 'X-CSRF-TOKEN': '{{ csrf_token() }}',
                                 'Content-Type': 'application/json',
-                                'Accept': 'application/json'
-                            }
-                        })
-                        .then(res => res.json())
-                        .then(data => {
-                            if (data.success) {
-                                this.unreadCount = Math.max(0, this.unreadCount - 1);
-                                event.target.closest('.notification-item').remove();
-                            }
-                        });
-                    }
-                }" class="relative">
-                    <button @click="open = !open" class="p-2 rounded-lg text-[#7070a0] hover:text-white hover:bg-white/5 transition-colors focus:outline-none">
+                @php
+                $unreadAppNotifs = \App\Models\AppNotification::where('user_id', Auth::id())->where('is_read', false)->latest()->take(5)->get();
+                @endphp
+                <div x-data="{ open: false, unreadCount: {{ $unreadAppNotifs->count() }} }" class="relative">
+                    <button @click="open = !open" class="p-2 rounded-xl text-[#7070a0] hover:text-[#e879f9] hover:bg-white/5 transition-all relative">
                         <div class="relative">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
@@ -126,31 +128,25 @@
                          class="absolute right-0 top-full mt-2 w-80 sm:w-96 min-w-[300px] sm:min-w-[360px] glass-card rounded-2xl p-4 shadow-2xl z-30" style="display: none;">
                         <div class="flex items-center justify-between border-b border-white/5 pb-2.5 mb-2.5">
                             <span class="text-xs font-bold text-white uppercase tracking-wider">Bildirimler</span>
-                            <template x-if="unreadCount > 0">
-                                <form method="POST" action="{{ route('admin.notifications.read-all') }}">
-                                    @csrf
-                                    <button type="submit" class="text-[10px] text-[#e879f9] hover:underline font-semibold">Tümünü Oku</button>
-                                </form>
-                            </template>
+                            <form method="POST" action="{{ route('admin.support.notifications.read-all') }}">
+                                @csrf
+                                <button type="submit" class="text-[10px] text-[#e879f9] hover:underline font-semibold">Tümünü Oku</button>
+                            </form>
                         </div>
 
                         <div class="space-y-2 max-h-72 overflow-y-auto pr-1">
-                            @forelse(Auth::user()->unreadNotifications->take(5) as $notif)
-                            <div class="notification-item flex items-start gap-3 p-2.5 rounded-xl hover:bg-white/[0.04] bg-white/[0.01] border border-white/5 transition-all">
+                            @forelse($unreadAppNotifs as $notif)
+                            <a href="{{ $notif->link ?? route('admin.support.index') }}" class="notification-item flex items-start gap-3 p-2.5 rounded-xl hover:bg-white/[0.06] bg-white/[0.02] border border-white/5 transition-all block">
                                 <div class="w-2.5 h-2.5 mt-1.5 rounded-full bg-purple-500 flex-shrink-0 shadow-lg shadow-purple-500/30"></div>
                                 <div class="flex-1 min-w-0">
-                                    <p class="text-xs text-white/90 leading-relaxed font-medium">{{ $notif->data['message'] ?? 'Yeni talep var.' }}</p>
+                                    <p class="text-xs text-white font-bold">{{ $notif->title }}</p>
+                                    <p class="text-[11px] text-[#a0a0c0] leading-relaxed mt-0.5">{{ $notif->message }}</p>
                                     <p class="text-[10px] text-[#7070a0] mt-1">{{ $notif->created_at->diffForHumans() }}</p>
                                 </div>
-                                <button @click="markAsRead('{{ $notif->id }}', $event)" class="text-[#7070a0] hover:text-green-400 p-1.5 flex-shrink-0 transition-colors rounded-lg hover:bg-white/5" title="Okundu işaretle">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
-                                    </svg>
-                                </button>
-                            </div>
+                            </a>
                             @empty
-                            <div class="text-center py-10 text-[#7070a0] text-xs">
-                                Okunmamış bildirim bulunmuyor.
+                            <div class="text-center py-8 text-[#7070a0] text-xs">
+                                Yeni veya okunmamış bildirim bulunmuyor.
                             </div>
                             @endforelse
                         </div>
@@ -223,10 +219,10 @@
     <div id="pwa-install-banner" class="fixed bottom-6 left-4 right-4 md:left-auto md:right-4 md:w-96 z-50 glass-card p-4 rounded-2xl border border-purple-500/20 shadow-2xl flex flex-col gap-3 transition-all duration-300 transform translate-y-32 opacity-0 pointer-events-none">
         <div class="flex items-start gap-3">
             <div class="w-12 h-12 rounded-xl gradient-brand flex items-center justify-center flex-shrink-0 text-white text-xl font-black shadow-lg shadow-purple-500/20">
-                H
+                S
             </div>
             <div class="flex-1 min-w-0">
-                <h4 id="pwa-title" class="text-sm font-bold text-white">HairApp'i Masaüstüne Yükleyin</h4>
+                <h4 id="pwa-title" class="text-sm font-bold text-white">Salonim'i Masaüstüne Yükleyin</h4>
                 <p id="pwa-description" class="text-xs text-[#a0a0c0] mt-1 leading-relaxed">Yönetici paneline hızlıca erişmek, bildirimleri anlık takip etmek için uygulamasını yükleyin.</p>
             </div>
             <button onclick="window.dismissPwaBanner()" class="text-[#7070a0] hover:text-white transition-colors">

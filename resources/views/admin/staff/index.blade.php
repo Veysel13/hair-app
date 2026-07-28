@@ -3,12 +3,25 @@
 @section('page-title','Personel Yönetimi')
 @section('page-subtitle','Çalışanları görüntüle, ekle ve yönet')
 @section('content')
-<div class="flex justify-end mb-4">
+<div class="flex items-center justify-between gap-3 mb-4 flex-wrap">
+    <div>
+        @if($business->enable_commission)
+        <a href="{{ route('admin.staff.commissions') }}" class="btn btn-secondary text-xs font-bold border-purple-500/30 text-purple-300 hover:bg-purple-600/20">
+            <span>💰</span> Prim & Hak Ediş Raporunu İncele ↗
+        </a>
+        @else
+        <a href="{{ route('admin.settings.edit') }}" class="text-xs text-[#7070a0] hover:text-purple-300 transition-colors">
+            ℹ️ Personel prim sistemini aktifleştirmek için tıklayın.
+        </a>
+        @endif
+    </div>
+
     <a href="{{ route('admin.staff.create') }}" class="btn btn-primary">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
         Personel Ekle
     </a>
 </div>
+
 <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
     @forelse($staff as $s)
     @php $stat = $stats[$s->id] ?? []; @endphp
@@ -23,7 +36,12 @@
                     <p class="text-xs text-[#7070a0]">{{ $s->title }}</p>
                 </div>
             </div>
-            <span class="badge {{ $s->is_active ? 'badge-success':'badge-gray' }}">{{ $s->is_active ? 'Aktif':'Pasif' }}</span>
+            <div class="flex flex-col items-end gap-1">
+                <span class="badge {{ $s->is_active ? 'badge-success':'badge-gray' }}">{{ $s->is_active ? 'Aktif':'Pasif' }}</span>
+                @if($business->enable_commission)
+                <span class="badge badge-purple text-[10px]" title="Prim Oranı">💰 %{{ number_format($s->commission_rate, 0) }} Prim</span>
+                @endif
+            </div>
         </div>
         <div class="grid grid-cols-3 gap-3 mb-4">
             <div class="text-center p-2 rounded-xl bg-white/3">

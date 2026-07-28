@@ -38,6 +38,7 @@ class Business extends Model
         'deposit_required',
         'deposit_percentage',
         'cancellation_hours',
+        'enable_commission',
     ];
 
     protected function casts(): array
@@ -48,6 +49,7 @@ class Business extends Model
             'avg_rating'        => 'float',
             'is_active'         => 'boolean',
             'deposit_required'  => 'boolean',
+            'enable_commission' => 'boolean',
         ];
     }
 

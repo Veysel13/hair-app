@@ -301,7 +301,7 @@
     {{-- ── 6. İŞLETME KAYIT ÇAĞRISI (CTA BANNER) ── --}}
     <div class="relative rounded-3xl overflow-hidden bg-gradient-to-br from-[#db2777]/20 via-[#9d174d]/10 to-transparent p-7 border border-pink-500/10 text-center space-y-5">
         <div class="space-y-2.5">
-            <h3 class="text-base font-extrabold text-white">İşletmenizi HairApp ile Büyütün!</h3>
+            <h3 class="text-base font-extrabold text-white">İşletmenizi Salonim ile Büyütün!</h3>
             <p class="text-sm text-[#a0a0c0] max-w-sm mx-auto leading-relaxed">
                 Kuaför, berber veya tırnak salonunuzu sisteme entegre edin. Randevu çakışmalarını sıfıra indirin, müşteri kitlelerinizi yönetin.
             </p>
@@ -320,7 +320,7 @@
     <div id="pwa-homepage-promo" class="relative rounded-3xl overflow-hidden bg-gradient-to-br from-purple-900/20 to-indigo-950/20 p-7 border border-purple-500/10 text-center space-y-5" style="display: none;">
         <div class="space-y-2.5">
             <h3 class="text-base font-extrabold text-white flex items-center justify-center gap-2">
-                <span>📲</span> HairApp Uygulamasını İndirin
+                <span>📲</span> Salonim Uygulamasını İndirin
             </h3>
             <p id="pwa-promo-desc" class="text-sm text-[#a0a0c0] max-w-md mx-auto leading-relaxed">
                 Randevularınızı saniyeler içinde almak, anlık bildirimleri takip etmek ve hızlı erişim sağlamak için hemen kurun.

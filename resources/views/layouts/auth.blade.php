@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Giriş') — HairApp</title>
+    <title>@yield('title', 'Giriş') — Salonim</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body style="background:#0f0f14; min-height:100vh; display:flex; align-items:center; justify-content:center; font-family:'Inter',sans-serif;">

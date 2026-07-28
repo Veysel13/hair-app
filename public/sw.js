@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hairapp-cache-v1';
+const CACHE_NAME = 'salonim-cache-v1';
 const ASSETS = [
   '/',
   '/favicon.ico',

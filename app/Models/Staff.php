@@ -24,12 +24,14 @@ class Staff extends Model
         'avatar',
         'is_active',
         'display_order',
+        'commission_rate',
     ];
 
     protected function casts(): array
     {
         return [
-            'is_active' => 'boolean',
+            'is_active'       => 'boolean',
+            'commission_rate' => 'float',
         ];
     }
 

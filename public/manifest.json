@@ -1,6 +1,6 @@
 {
-  "name": "HairApp Güzellik & Randevu",
-  "short_name": "HairApp",
+  "name": "Salonim Güzellik & Randevu",
+  "short_name": "Salonim",
   "description": "Güzellik ve bakım randevunuz tek tıkla! Yakınındaki salonları keşfet, müsait saatini seç.",
   "start_url": "/",
   "display": "standalone",

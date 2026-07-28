@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const pwaButtons = document.getElementById('pwa-buttons-container');
         
         if (pwaBanner) {
-            if (pwaTitle) pwaTitle.textContent = "HairApp'i iPhone'unuza Yükleyin 📲";
+            if (pwaTitle) pwaTitle.textContent = "Salonim'i iPhone'unuza Yükleyin 📲";
             if (pwaDescription) {
                 pwaDescription.innerHTML = `
                     Uygulamayı yüklemek için:

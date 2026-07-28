@@ -3,7 +3,7 @@
 
 @push('head')
 <meta name="description" content="{{ Str::limit($business->description ?? $business->name . ' salonumuzda saç tasarımı, kesim, boya ve bakım hizmetlerimizden randevu alın.', 150) }}">
-<meta property="og:title" content="{{ $business->name }} — HairApp">
+<meta property="og:title" content="{{ $business->name }} — Salonim">
 <meta property="og:description" content="{{ Str::limit($business->description, 150) }}">
 @if($business->cover_image)
 <meta property="og:image" content="{{ asset($business->cover_image) }}">

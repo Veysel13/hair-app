@@ -17,12 +17,16 @@ class AppointmentService extends Model
         'duration_minutes',
         'price',
         'sort_order',
+        'commission_rate',
+        'commission_amount',
     ];
 
     protected function casts(): array
     {
         return [
-            'price' => 'float',
+            'price'             => 'float',
+            'commission_rate'   => 'float',
+            'commission_amount' => 'float',
         ];
     }
 

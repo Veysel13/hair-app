@@ -26,10 +26,15 @@ class Appointment extends Model
         'deposit_amount',
         'deposit_paid',
         'deposit_paid_at',
+        'payment_method',
+        'cash_amount',
+        'card_amount',
+        'tip_amount',
         'notes',
         'internal_notes',
         'cancellation_reason',
         'cancelled_at',
+        'completed_at',
         'reminded_at',
         'source',
     ];
@@ -41,9 +46,13 @@ class Appointment extends Model
             'deposit_paid'     => 'boolean',
             'deposit_paid_at'  => 'datetime',
             'cancelled_at'     => 'datetime',
+            'completed_at'     => 'datetime',
             'reminded_at'      => 'datetime',
             'total_price'      => 'float',
             'deposit_amount'   => 'float',
+            'cash_amount'      => 'float',
+            'card_amount'      => 'float',
+            'tip_amount'       => 'float',
         ];
     }
 

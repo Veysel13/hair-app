@@ -12,6 +12,8 @@ use App\Http\Controllers\Admin\ServiceController;
 use App\Http\Controllers\Admin\StaffController;
 use App\Http\Controllers\Admin\BusinessSettingsController;
 use App\Http\Controllers\Admin\NotificationController;
+use App\Http\Controllers\Admin\GuideController;
+use App\Http\Controllers\Admin\SupportController;
 use App\Http\Controllers\Auth\LoginController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Customer\HomeController as CustomerHomeController;
@@ -63,8 +65,9 @@ Route::prefix('admin')
     ->name('admin.')
     ->group(function () {
 
-        // Dashboard
+        // Dashboard & Kullanım Kılavuzu
         Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+        Route::get('/guide', [GuideController::class, 'index'])->name('guide.index');
 
         // Randevular
         Route::get('/appointments',                    [AppointmentController::class, 'index'])->name('appointments.index');
@@ -72,12 +75,14 @@ Route::prefix('admin')
         Route::post('/appointments',                   [AppointmentController::class, 'store'])->name('appointments.store');
         Route::get('/appointments/{appointment}',      [AppointmentController::class, 'show'])->name('appointments.show');
         Route::patch('/appointments/{appointment}/status', [AppointmentController::class, 'updateStatus'])->name('appointments.status');
+        Route::post('/appointments/{appointment}/checkout', [AppointmentController::class, 'checkout'])->name('appointments.checkout');
 
         // Takvim
         Route::get('/calendar', [CalendarController::class, 'index'])->name('calendar.index');
 
         // Personel
         Route::get('/staff',                [StaffController::class, 'index'])->name('staff.index');
+        Route::get('/staff/commissions',    [StaffController::class, 'commissions'])->name('staff.commissions');
         Route::get('/staff/create',         [StaffController::class, 'create'])->name('staff.create');
         Route::post('/staff',               [StaffController::class, 'store'])->name('staff.store');
         Route::get('/staff/{staff}/edit',   [StaffController::class, 'edit'])->name('staff.edit');
@@ -100,6 +105,7 @@ Route::prefix('admin')
 
         // Finans
         Route::get('/finance',               [FinanceController::class, 'index'])->name('finance.index');
+        Route::get('/finance/z-report',      [FinanceController::class, 'zReport'])->name('finance.z-report');
         Route::post('/finance/expenses',     [FinanceController::class, 'storeExpense'])->name('finance.expenses.store');
         Route::delete('/finance/expenses/{expense}', [FinanceController::class, 'destroyExpense'])->name('finance.expenses.destroy');
 
@@ -129,6 +135,12 @@ Route::prefix('admin')
         Route::put('/settings/hours', [BusinessSettingsController::class, 'updateHours'])->name('settings.hours.update');
         Route::post('/settings/images', [BusinessSettingsController::class, 'uploadImage'])->name('settings.images.store');
         Route::delete('/settings/images/{image}', [BusinessSettingsController::class, 'destroyImage'])->name('settings.images.destroy');
+
+        // Canlı Destek & İletişim
+        Route::get('/support',                      [SupportController::class, 'index'])->name('support.index');
+        Route::post('/support',                     [SupportController::class, 'store'])->name('support.store');
+        Route::post('/support/{ticket}/reply',      [SupportController::class, 'reply'])->name('support.reply');
+        Route::post('/support/read-notifications',  [SupportController::class, 'markNotificationsRead'])->name('support.notifications.read-all');
 
         // Bildirim Rotaları
         Route::patch('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');

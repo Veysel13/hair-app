@@ -11,25 +11,84 @@
 
         {{-- Müşteri + Personel Özeti --}}
         <div class="glass-card rounded-2xl p-6">
-            <div class="flex items-start gap-4 flex-wrap">
-                <div class="w-14 h-14 rounded-2xl gradient-brand flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
-                    {{ substr($appointment->customer->name,0,1) }}
-                </div>
-                <div class="flex-1">
-                    <h2 class="text-lg font-bold text-white">{{ $appointment->customer->name }}</h2>
-                    <p class="text-sm text-[#7070a0]">{{ $appointment->customer->phone }}</p>
-                    <div class="flex gap-3 mt-2 flex-wrap text-xs text-[#a0a0c0]">
-                        <span>📅 {{ $appointment->appointment_date->format('d M Y, D') }}</span>
-                        <span>🕐 {{ substr($appointment->start_time,0,5) }} – {{ substr($appointment->end_time,0,5) }}</span>
-                        <span>👤 {{ $appointment->staff->name }}</span>
+            <div class="flex items-start justify-between gap-4 flex-wrap">
+                <div class="flex items-start gap-4">
+                    <div class="w-14 h-14 rounded-2xl gradient-brand flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
+                        {{ substr($appointment->customer->name,0,1) }}
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <h2 class="text-lg font-bold text-white">{{ $appointment->customer->name }}</h2>
+                            @if($customerProfile->is_vip)
+                            <span class="badge badge-purple text-xs">⭐ VIP</span>
+                            @endif
+                        </div>
+                        <p class="text-sm text-[#7070a0]">{{ $appointment->customer->phone }}</p>
+                        <div class="flex gap-3 mt-2 flex-wrap text-xs text-[#a0a0c0]">
+                            <span>📅 {{ $appointment->appointment_date->format('d M Y, D') }}</span>
+                            <span>🕐 {{ substr($appointment->start_time,0,5) }} – {{ substr($appointment->end_time,0,5) }}</span>
+                            <span>👤 {{ $appointment->staff->name }}</span>
+                        </div>
                     </div>
                 </div>
-                @php
-                $badgeClass = match($appointment->status) { 'pending'=>'badge-warning','confirmed'=>'badge-info','in_progress'=>'badge-purple','completed'=>'badge-success','cancelled'=>'badge-danger','no_show'=>'badge-gray', default=>'badge-gray' };
-                $statusLabel = match($appointment->status) { 'pending'=>'Bekliyor','confirmed'=>'Onaylı','in_progress'=>'Devam Ediyor','completed'=>'Tamamlandı','cancelled'=>'İptal','no_show'=>'Gelmedi', default=>$appointment->status };
-                @endphp
-                <span class="badge {{ $badgeClass }} text-sm">{{ $statusLabel }}</span>
+                <div class="flex flex-col items-end gap-2">
+                    @php
+                    $badgeClass = match($appointment->status) { 'pending'=>'badge-warning','confirmed'=>'badge-info','in_progress'=>'badge-purple','completed'=>'badge-success','cancelled'=>'badge-danger','no_show'=>'badge-gray', default=>'badge-gray' };
+                    $statusLabel = match($appointment->status) { 'pending'=>'Bekliyor','confirmed'=>'Onaylı','in_progress'=>'Devam Ediyor','completed'=>'Tamamlandı','cancelled'=>'İptal','no_show'=>'Gelmedi', default=>$appointment->status };
+                    @endphp
+                    <span class="badge {{ $badgeClass }} text-sm">{{ $statusLabel }}</span>
+                    <a href="{{ route('admin.customers.show', $customerProfile) }}" target="_blank" class="btn btn-secondary btn-sm text-xs font-semibold flex items-center gap-1 hover:border-purple-500/40">
+                        <span>👤</span> Müşteri Kartı ↗
+                    </a>
+                </div>
             </div>
+        </div>
+
+        {{-- Müşteri Profili & VIP Notları --}}
+        <div class="glass-card rounded-2xl p-6 bg-gradient-to-br from-purple-950/30 via-[#181824] to-[#12121a] border border-purple-500/20">
+            <div class="flex items-center justify-between gap-2 mb-4">
+                <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                    <span>⭐</span> Müşteri Profili & Notları
+                </h3>
+                <a href="{{ route('admin.customers.show', $customerProfile) }}" target="_blank" class="text-xs text-purple-400 hover:text-purple-300 font-semibold inline-flex items-center gap-1">
+                    Notları Düzenle ↗
+                </a>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-3">
+                <div class="bg-white/3 p-2.5 rounded-xl border border-white/5">
+                    <p class="text-[10px] text-[#7070a0] uppercase font-bold">Saç Tipi</p>
+                    <p class="text-xs font-medium text-white mt-0.5">{{ $customerProfile->hair_type ?? '—' }}</p>
+                </div>
+                <div class="bg-white/3 p-2.5 rounded-xl border border-white/5">
+                    <p class="text-[10px] text-[#7070a0] uppercase font-bold">Saç Rengi</p>
+                    <p class="text-xs font-medium text-white mt-0.5">{{ $customerProfile->hair_color ?? '—' }}</p>
+                </div>
+                <div class="bg-white/3 p-2.5 rounded-xl border border-white/5">
+                    <p class="text-[10px] text-[#7070a0] uppercase font-bold">Toplam Ziyaret</p>
+                    <p class="text-xs font-bold text-white mt-0.5">{{ $customerProfile->total_visits }} Kez</p>
+                </div>
+                <div class="bg-white/3 p-2.5 rounded-xl border border-white/5">
+                    <p class="text-[10px] text-[#7070a0] uppercase font-bold">Toplam Harcama</p>
+                    <p class="text-xs font-bold text-[#e879f9] mt-0.5">{{ number_format($customerProfile->total_spent, 0, ',', '.') }} ₺</p>
+                </div>
+            </div>
+
+            @if($customerProfile->allergies)
+            <div class="mb-3 bg-red-500/10 border border-red-500/20 p-3 rounded-xl">
+                <p class="text-[10px] text-red-400 font-bold uppercase mb-0.5">⚠️ Alerji / Hassasiyet</p>
+                <p class="text-xs text-red-200">{{ $customerProfile->allergies }}</p>
+            </div>
+            @endif
+
+            @if($customerProfile->notes)
+            <div class="bg-white/3 p-3 rounded-xl border border-white/5">
+                <p class="text-[10px] text-[#7070a0] uppercase font-bold mb-1">📌 Müşteri Tercihleri ve Notları (Kahve, Alışkanlıklar vb.)</p>
+                <p class="text-xs text-[#d0d0e0] leading-relaxed">{{ $customerProfile->notes }}</p>
+            </div>
+            @else
+            <p class="text-xs text-[#7070a0]">Henüz özel not eklenmemiş. Müşteri kartından dilediğiniz notları girebilirsiniz.</p>
+            @endif
         </div>
 
         {{-- Hizmetler --}}
@@ -103,10 +162,196 @@
             @endif
         </div>
         @endif
+
+        {{-- İşlem Teknik Detayı & Formülü (Reçete / Uygulama Notu) --}}
+        @php
+            $treatmentRecord = $appointment->treatmentRecords->first() ?? $customerProfile->treatmentRecords->firstWhere('appointment_id', $appointment->id);
+        @endphp
+        <div x-data="{ showForm: false }" class="glass-card rounded-2xl p-6">
+            <div class="flex items-center justify-between gap-2 mb-4">
+                <h3 class="text-sm font-semibold text-white flex items-center gap-2">
+                    <span>📝</span> Bu Randevunun İşlem & Formül Kaydı
+                </h3>
+                <button type="button" @click="showForm = !showForm" class="btn btn-secondary btn-sm text-xs font-semibold">
+                    <span x-text="showForm ? '✕ Formu Kapat' : '{{ $treatmentRecord ? '✏️ Formülü Düzenle' : '➕ Formül / Not Ekle' }}'"></span>
+                </button>
+            </div>
+
+            @if($treatmentRecord)
+            <div class="space-y-3 bg-white/3 p-4 rounded-xl border border-white/5 mb-3">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    @if(!empty($treatmentRecord->formula))
+                    <div>
+                        <p class="text-[10px] text-[#7070a0] uppercase font-bold mb-1">Stil / Boya Formülü</p>
+                        <div class="flex flex-wrap gap-1">
+                            @foreach($treatmentRecord->formula as $f)
+                            <span class="badge badge-purple text-xs font-medium">{{ $f }}</span>
+                            @endforeach
+                        </div>
+                    </div>
+                    @endif
+
+                    @if(!empty($treatmentRecord->products_used))
+                    <div>
+                        <p class="text-[10px] text-[#7070a0] uppercase font-bold mb-1">Kullanılan Ürünler</p>
+                        <div class="flex flex-wrap gap-1">
+                            @foreach($treatmentRecord->products_used as $p)
+                            <span class="badge badge-gray text-xs font-medium">{{ $p }}</span>
+                            @endforeach
+                        </div>
+                    </div>
+                    @endif
+                </div>
+
+                @if($treatmentRecord->notes)
+                <div>
+                    <p class="text-[10px] text-[#7070a0] uppercase font-bold mb-1">Teknisyen / Operasyon Notu</p>
+                    <p class="text-xs text-[#d0d0e0] leading-relaxed">{{ $treatmentRecord->notes }}</p>
+                </div>
+                @endif
+
+                @if($treatmentRecord->before_image || $treatmentRecord->after_image)
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
+                    @if($treatmentRecord->before_image)
+                    <div>
+                        <p class="text-[10px] text-[#7070a0] mb-1 font-bold">Önce</p>
+                        <div class="aspect-square rounded-xl overflow-hidden bg-white/5 border border-white/5">
+                            <img src="{{ asset('storage/' . $treatmentRecord->before_image) }}" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+                    @endif
+                    @if($treatmentRecord->after_image)
+                    <div>
+                        <p class="text-[10px] text-[#7070a0] mb-1 font-bold">Sonra</p>
+                        <div class="aspect-square rounded-xl overflow-hidden bg-white/5 border border-white/5">
+                            <img src="{{ asset('storage/' . $treatmentRecord->after_image) }}" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+                    @endif
+                </div>
+                @endif
+            </div>
+            @else
+            <p class="text-xs text-[#7070a0] mb-3">Bu randevuya henüz işlem formülü veya not eklenmedi. İşlem tamamlandıktan sonra veya esnasında aşağıdan formül girebilirsiniz.</p>
+            @endif
+
+            {{-- Formül Ekleme / Güncelleme Formu --}}
+            <div x-show="showForm" x-transition class="bg-white/3 p-4 rounded-xl border border-white/5 space-y-3 mt-3">
+                <form method="POST" action="{{ route('admin.customers.treatment-records.store', $customerProfile) }}" enctype="multipart/form-data" class="space-y-3">
+                    @csrf
+                    <input type="hidden" name="appointment_id" value="{{ $appointment->id }}">
+                    <input type="hidden" name="staff_id" value="{{ $appointment->staff_id }}">
+                    <input type="hidden" name="service_id" value="{{ $appointment->services->first()?->service_id }}">
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div>
+                            <label class="form-label text-[10px]">Stil / Boya Formülü (Virgülle ayırın)</label>
+                            <input type="text" name="formula" value="{{ $treatmentRecord && is_array($treatmentRecord->formula) ? implode(', ', $treatmentRecord->formula) : '' }}" class="form-input text-xs" placeholder="Örn: Koleston 7.1, %6 Oksidan, 30gr">
+                        </div>
+                        <div>
+                            <label class="form-label text-[10px]">Kullanılan Ürünler (Virgülle ayırın)</label>
+                            <input type="text" name="products_used" value="{{ $treatmentRecord && is_array($treatmentRecord->products_used) ? implode(', ', $treatmentRecord->products_used) : '' }}" class="form-input text-xs" placeholder="Örn: L'Oreal Serie Expert, Olaplex No.3">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="form-label text-[10px]">Teknisyen / Operasyon Notu</label>
+                        <textarea name="notes" rows="2" class="form-input text-xs" placeholder="Uygulama esnasında alınan notlar (örn: Saç uçları kuru, 35dk bekletildi)...">{{ $treatmentRecord?->notes }}</textarea>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="form-label text-[10px]">İşlem Öncesi Fotoğraf</label>
+                            <input type="file" name="before_image" accept="image/*" class="w-full text-xs text-white/50 file:mr-2 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-[10px] file:font-semibold file:bg-purple-600 file:text-white hover:file:bg-purple-700">
+                        </div>
+                        <div>
+                            <label class="form-label text-[10px]">İşlem Sonrası Fotoğraf</label>
+                            <input type="file" name="after_image" accept="image/*" class="w-full text-xs text-white/50 file:mr-2 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-[10px] file:font-semibold file:bg-purple-600 file:text-white hover:file:bg-purple-700">
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end pt-1">
+                        <button type="submit" class="btn btn-primary btn-sm py-1.5 px-4 text-xs font-bold">
+                            Kaydet ve Müşteri Kartıyla Eşitle 💾
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 
     {{-- Sağ: Aksiyonlar --}}
     <div class="space-y-4">
+
+        {{-- Adisyon Kapatma ve Ödeme Alma Paneli --}}
+        <div class="glass-card rounded-2xl p-6 bg-gradient-to-br from-green-950/40 via-[#161622] to-[#12121a] border border-green-500/30" x-data="{ method: '{{ $appointment->payment_method ?? 'cash' }}' }">
+            <div class="flex items-center justify-between gap-2 mb-3">
+                <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                    <span>💳</span> Adisyon Kapat & Ödeme Al
+                </h3>
+                @if($appointment->status === 'completed')
+                <span class="badge badge-success text-[10px]">Adisyon Kapalı</span>
+                @endif
+            </div>
+
+            <p class="text-xs text-[#a0a0c0] mb-4">
+                Ödeme alma yöntemini seçin, nakit/kart dağılımını ve bahşişi girerek randevuyu tamamlayın.
+            </p>
+
+            <form method="POST" action="{{ route('admin.appointments.checkout', $appointment) }}" class="space-y-4">
+                @csrf
+
+                {{-- Ödeme Yöntemi Seçimi --}}
+                <div>
+                    <label class="form-label text-[11px]">Ödeme Yöntemi</label>
+                    <div class="grid grid-cols-3 gap-1.5 p-1 rounded-xl bg-white/5 border border-white/5 text-xs font-semibold">
+                        <button type="button" @click="method = 'cash'" :class="method === 'cash' ? 'bg-green-600 text-white shadow-md' : 'text-[#a0a0c0] hover:text-white'" class="py-2 rounded-lg transition-all text-center">
+                            💵 Nakit
+                        </button>
+                        <button type="button" @click="method = 'card'" :class="method === 'card' ? 'bg-purple-600 text-white shadow-md' : 'text-[#a0a0c0] hover:text-white'" class="py-2 rounded-lg transition-all text-center">
+                            💳 Kredi Kartı
+                        </button>
+                        <button type="button" @click="method = 'split'" :class="method === 'split' ? 'bg-blue-600 text-white shadow-md' : 'text-[#a0a0c0] hover:text-white'" class="py-2 rounded-lg transition-all text-center">
+                            🔀 Parçalı
+                        </button>
+                    </div>
+                    <input type="hidden" name="payment_method" :value="method">
+                </div>
+
+                {{-- Parçalı Ödeme Girdileri --}}
+                <div x-show="method === 'split'" x-transition class="grid grid-cols-2 gap-3 bg-white/3 p-3 rounded-xl border border-white/5">
+                    <div>
+                        <label class="form-label text-[10px]">Alınan Nakit (₺)</label>
+                        <input type="number" name="cash_amount" value="{{ old('cash_amount', $appointment->cash_amount > 0 ? $appointment->cash_amount : $appointment->total_price / 2) }}" step="0.5" min="0" class="form-input text-xs">
+                    </div>
+                    <div>
+                        <label class="form-label text-[10px]">Alınan Kart (₺)</label>
+                        <input type="number" name="card_amount" value="{{ old('card_amount', $appointment->card_amount > 0 ? $appointment->card_amount : $appointment->total_price / 2) }}" step="0.5" min="0" class="form-input text-xs">
+                    </div>
+                </div>
+
+                {{-- Bahşiş & Fiş Notu --}}
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="form-label text-[11px]">Bahşiş / Tip (₺)</label>
+                        <input type="number" name="tip_amount" value="{{ old('tip_amount', $appointment->tip_amount ?? 0) }}" step="1" min="0" class="form-input text-xs" placeholder="Örn: 50">
+                    </div>
+                    <div>
+                        <label class="form-label text-[11px]">Fiş / Kasa Notu</label>
+                        <input type="text" name="internal_notes" value="{{ old('internal_notes', $appointment->internal_notes) }}" class="form-input text-xs" placeholder="Örn: Fatura kesildi">
+                    </div>
+                </div>
+
+                <div class="p-3 rounded-xl bg-white/3 border border-white/5 flex items-center justify-between text-xs">
+                    <span class="text-[#a0a0c0]">Ödenecek Hizmet Bedeli:</span>
+                    <span class="text-base font-bold text-green-400">{{ number_format($appointment->total_price, 2, ',', '.') }} ₺</span>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-full py-3 text-xs font-bold bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 shadow-lg shadow-green-600/30">
+                    <span>⚡</span> Adisyonu Kapat ve Kasa Hesabına İşle
+                </button>
+            </form>
+        </div>
 
         {{-- Durum Güncelle --}}
         @if(!in_array($appointment->status,['completed','cancelled','no_show']))

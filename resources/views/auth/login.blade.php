@@ -9,7 +9,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
             </svg>
         </div>
-        <h1 class="text-2xl font-bold text-white">HairApp</h1>
+        <h1 class="text-2xl font-bold text-white">Salonim</h1>
         <p class="text-sm text-[#7070a0] mt-1">Admin Paneli</p>
     </div>
 
