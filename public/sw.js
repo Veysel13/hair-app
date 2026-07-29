@@ -1,8 +1,11 @@
-const CACHE_NAME = 'salonim-cache-v1';
+const CACHE_NAME = 'salonim-cache-v2';
 const ASSETS = [
   '/',
   '/favicon.ico',
-  '/manifest.json'
+  '/manifest.json',
+  '/apple-touch-icon.png',
+  '/icon-192.png',
+  '/icon-512.png'
 ];
 
 self.addEventListener('install', event => {

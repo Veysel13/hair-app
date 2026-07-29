@@ -6,6 +6,9 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Panel') — Salonim Admin</title>
     <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('head')
 </head>
@@ -218,8 +221,15 @@
     {{-- PWA Install Banner --}}
     <div id="pwa-install-banner" class="fixed bottom-6 left-4 right-4 md:left-auto md:right-4 md:w-96 z-50 glass-card p-4 rounded-2xl border border-purple-500/20 shadow-2xl flex flex-col gap-3 transition-all duration-300 transform translate-y-32 opacity-0 pointer-events-none">
         <div class="flex items-start gap-3">
-            <div class="w-12 h-12 rounded-xl gradient-brand flex items-center justify-center flex-shrink-0 text-white text-xl font-black shadow-lg shadow-purple-500/20">
-                S
+            <div class="w-12 h-12 rounded-xl gradient-brand flex items-center justify-center flex-shrink-0 text-white shadow-lg shadow-purple-500/20">
+                <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="6" cy="6" r="2.5" />
+                    <circle cx="6" cy="18" r="2.5" />
+                    <path d="M8.2 7.8L19 18.5" />
+                    <path d="M8.2 16.2L12 12.4" />
+                    <path d="M14.8 9.6L19 5.5" />
+                    <path d="M17 10L17.6 11.4L19 12L17.6 12.6L17 14L16.4 12.6L15 12L16.4 11.4L17 10Z" fill="currentColor" stroke="none" />
+                </svg>
             </div>
             <div class="flex-1 min-w-0">
                 <h4 id="pwa-title" class="text-sm font-bold text-white">Salonim'i Masaüstüne Yükleyin</h4>
@@ -233,7 +243,7 @@
             <button onclick="window.dismissPwaBanner()" class="btn btn-secondary text-xs py-2 px-3 flex-1">
                 Daha Sonra
             </button>
-            <button id="pwa-install-btn" class="btn btn-primary text-xs py-2 px-4 flex-1 font-bold">
+            <button type="button" id="pwa-install-btn" onclick="window.triggerPwaInstall()" class="btn btn-primary text-xs py-2 px-4 flex-1 font-bold">
                 Paneli Yükle 🚀
             </button>
         </div>

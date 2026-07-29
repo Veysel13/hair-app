@@ -131,8 +131,8 @@ class BookingController extends Controller
     public function getAvailableSlots(Request $request, Business $business): JsonResponse
     {
         $data = $request->validate([
-            'date'        => 'required|date|after_or_equal:today',
-            'staff_id'    => 'required|exists:staff,id',
+            'date' => 'required|date|after_or_equal:today',
+            'staff_id' => 'required|exists:staff,id',
             'service_ids' => 'required|array|min:1',
             'service_ids.*' => 'exists:services,id',
         ]);
@@ -202,17 +202,17 @@ class BookingController extends Controller
     public function store(Request $request, Business $business): RedirectResponse
     {
         $rules = [
-            'staff_id'         => 'required|exists:staff,id',
+            'staff_id' => 'required|exists:staff,id',
             'appointment_date' => 'required|date|after_or_equal:today',
-            'start_time'       => 'required',
-            'service_ids'      => 'required|array|min:1',
-            'service_ids.*'    => 'exists:services,id',
-            'notes'            => 'nullable|string|max:500',
+            'start_time' => 'required',
+            'service_ids' => 'required|array|min:1',
+            'service_ids.*' => 'exists:services,id',
+            'notes' => 'nullable|string|max:500',
         ];
 
         // Giriş yapmamışsa isim ve telefon zorunlu
         if (!Auth::check()) {
-            $rules['name']  = 'required|string|max:100';
+            $rules['name'] = 'required|string|max:100';
             $rules['phone'] = 'required|string|max:20';
         }
 
@@ -230,18 +230,18 @@ class BookingController extends Controller
             if (!$customer) {
                 // Yoksa otomatik hesap aç
                 $customer = User::create([
-                    'name'     => $data['name'],
-                    'phone'    => $data['phone'],
-                    'email'    => $data['phone'] . '@hairapp.com',
+                    'name' => $data['name'],
+                    'phone' => $data['phone'],
+                    'email' => $data['phone'] . '@salonim.com.tr',
                     'password' => Hash::make(Str::random(12)),
-                    'role'     => 'customer',
+                    'role' => 'customer',
                 ]);
             }
         }
 
         $services = Service::whereIn('id', $data['service_ids'])->get();
         $totalDuration = $services->sum('duration_minutes');
-        
+
         $totalOriginalPrice = 0;
         $totalDiscountedPrice = 0;
         $totalDiscountAmount = 0;
@@ -316,36 +316,36 @@ class BookingController extends Controller
 
         // Randevu oluştur
         $appointment = Appointment::create([
-            'business_id'      => $business->id,
-            'customer_id'      => $customer->id,
-            'staff_id'         => $data['staff_id'],
+            'business_id' => $business->id,
+            'customer_id' => $customer->id,
+            'staff_id' => $data['staff_id'],
             'appointment_date' => $data['appointment_date'],
-            'start_time'       => $startTime,
-            'end_time'         => $endTime,
-            'status'           => 'pending', // Onay veya ön ödeme bekleniyor
-            'total_duration'   => $totalDuration,
-            'total_price'      => $totalDiscountedPrice,
-            'notes'            => $data['notes'] ?? null,
-            'source'           => 'app',
+            'start_time' => $startTime,
+            'end_time' => $endTime,
+            'status' => 'pending', // Onay veya ön ödeme bekleniyor
+            'total_duration' => $totalDuration,
+            'total_price' => $totalDiscountedPrice,
+            'notes' => $data['notes'] ?? null,
+            'source' => 'app',
         ]);
 
         // Randevu hizmetlerini kaydet
         foreach ($processedServices as $i => $item) {
             $appointment->services()->create([
-                'service_id'       => $item['service']->id,
-                'staff_id'         => $data['staff_id'],
+                'service_id' => $item['service']->id,
+                'staff_id' => $data['staff_id'],
                 'duration_minutes' => $item['service']->duration_minutes,
-                'price'            => $item['price'],
-                'sort_order'       => $i + 1,
+                'price' => $item['price'],
+                'sort_order' => $i + 1,
             ]);
         }
 
         // Kampanya kullanımını kaydet
         if ($bestCampaign && $totalDiscountAmount > 0) {
             CampaignUsage::create([
-                'campaign_id'     => $bestCampaign->id,
-                'appointment_id'  => $appointment->id,
-                'customer_id'     => $customer->id,
+                'campaign_id' => $bestCampaign->id,
+                'appointment_id' => $appointment->id,
+                'customer_id' => $customer->id,
                 'discount_amount' => $totalDiscountAmount,
             ]);
 
