@@ -207,9 +207,12 @@
 
 @push('scripts')
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+function initFinanceChart() {
+    if (typeof Chart === 'undefined') return;
+    const canvas = document.getElementById('financeChart');
+    if (!canvas) return;
     const data = @json($revenueByMonth);
-    const ctx = document.getElementById('financeChart').getContext('2d');
+    const ctx = canvas.getContext('2d');
     
     new Chart(ctx, {
         type: 'bar',
@@ -268,6 +271,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     });
-});
+}
+document.addEventListener('chartjs-loaded', initFinanceChart);
+document.addEventListener('DOMContentLoaded', initFinanceChart);
 </script>
 @endpush

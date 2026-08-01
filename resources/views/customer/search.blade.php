@@ -1,6 +1,36 @@
 @extends('layouts.customer')
 @section('title', 'İşletme Arama')
 
+@push('head')
+<script type="application/ld+json">
+{
+  "{{ '@' }}context": "https://schema.org",
+  "{{ '@' }}type": "ItemList",
+  "name": "Salonim İşletmeler ve Hizmet Arama",
+  "numberOfItems": {{ $businesses->count() }},
+  "itemListElement": [
+    @foreach($businesses->take(10) as $index => $b)
+    {
+      "{{ '@' }}type": "ListItem",
+      "position": {{ $index + 1 }},
+      "item": {
+        "{{ '@' }}type": "BeautySalon",
+        "name": "{{ addslashes($b->name) }}",
+        "url": "{{ route('book.show', $b) }}",
+        "address": {
+          "{{ '@' }}type": "PostalAddress",
+          "addressLocality": "{{ addslashes($b->district) }}",
+          "addressRegion": "{{ addslashes($b->city) }}",
+          "addressCountry": "TR"
+        }
+      }
+    }{{ !$loop->last ? ',' : '' }}
+    @endforeach
+  ]
+}
+</script>
+@endpush
+
 @section('content')
 <div class="space-y-4" x-data="{
     lat: {{ $lat }},

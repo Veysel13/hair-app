@@ -6,10 +6,14 @@ Alpine.plugin(intersect);
 window.Alpine = Alpine;
 Alpine.start();
 
-// Chart.js
-import { Chart, registerables } from 'chart.js';
-Chart.register(...registerables);
-window.Chart = Chart;
+// Lazy-load Chart.js only when a canvas requiring Chart is present
+if (document.querySelector('canvas#revenueChart, canvas#financeChart')) {
+    import('chart.js').then(({ Chart, registerables }) => {
+        Chart.register(...registerables);
+        window.Chart = Chart;
+        document.dispatchEvent(new CustomEvent('chartjs-loaded'));
+    });
+}
 
 // Global Date/Time Picker click-open handler
 document.addEventListener('click', function (e) {

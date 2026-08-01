@@ -200,11 +200,13 @@
 
 @push('scripts')
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const ctx = document.getElementById('revenueChart').getContext('2d');
+function initDashboardChart() {
+    if (typeof Chart === 'undefined') return;
+    const ctx = document.getElementById('revenueChart');
+    if (!ctx) return;
     const data = @json($revenueChart);
 
-    new Chart(ctx, {
+    new Chart(ctx.getContext('2d'), {
         type: 'bar',
         data: {
             labels: data.map(d => d.date),
@@ -228,6 +230,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     });
-});
+}
+document.addEventListener('chartjs-loaded', initDashboardChart);
+document.addEventListener('DOMContentLoaded', initDashboardChart);
 </script>
 @endpush

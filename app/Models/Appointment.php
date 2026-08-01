@@ -30,6 +30,7 @@ class Appointment extends Model
         'cash_amount',
         'card_amount',
         'tip_amount',
+        'discount_amount',
         'notes',
         'internal_notes',
         'cancellation_reason',
@@ -53,6 +54,7 @@ class Appointment extends Model
             'cash_amount'      => 'float',
             'card_amount'      => 'float',
             'tip_amount'       => 'float',
+            'discount_amount'  => 'float',
         ];
     }
 

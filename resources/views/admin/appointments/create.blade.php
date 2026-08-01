@@ -43,18 +43,51 @@
         <div class="space-y-4">
 
             {{-- Müşteri + Personel --}}
-            <div class="glass-card rounded-2xl p-6">
-                <h2 class="text-sm font-semibold text-white mb-4">Müşteri & Personel</h2>
+            <div class="glass-card rounded-2xl p-6" x-data="{ customerType: '{{ old('customer_type', 'existing') }}' }">
+                <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+                    <h2 class="text-sm font-semibold text-white">Müşteri & Personel</h2>
+                    <div class="flex items-center gap-2 bg-white/5 p-1 rounded-xl border border-white/10 text-xs">
+                        <button type="button" @click="customerType = 'existing'"
+                            :class="customerType === 'existing' ? 'bg-[#d946ef] text-white font-bold' : 'text-[#a0a0c0] hover:text-white'"
+                            class="px-3 py-1 rounded-lg transition-all">
+                            📋 Kayıtlı Müşteri Seç
+                        </button>
+                        <button type="button" @click="customerType = 'new'"
+                            :class="customerType === 'new' ? 'bg-[#d946ef] text-white font-bold' : 'text-[#a0a0c0] hover:text-white'"
+                            class="px-3 py-1 rounded-lg transition-all">
+                            ✨ Yeni Müşteri Ekle
+                        </button>
+                    </div>
+                </div>
+
+                <input type="hidden" name="customer_type" :value="customerType">
+
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label class="form-label">Müşteri *</label>
-                        <select name="customer_id" class="form-input" required>
+                    {{-- Kayıtlı Müşteri Seçimi --}}
+                    <div x-show="customerType === 'existing'" class="sm:col-span-2">
+                        <label class="form-label">Müşteri Seçin *</label>
+                        <select name="customer_id" class="form-input" :required="customerType === 'existing'">
                             <option value="">Müşteri seçin...</option>
                             @foreach($customers as $c)
                             <option value="{{ $c->id }}" {{ old('customer_id')==$c->id ? 'selected':'' }}>{{ $c->name }} ({{ $c->phone }})</option>
                             @endforeach
                         </select>
                     </div>
+
+                    {{-- Yeni Müşteri Ekleme (El ile isim + tel) --}}
+                    <div x-show="customerType === 'new'" class="contents">
+                        <div>
+                            <label class="form-label">Müşteri Adı Soyadı *</label>
+                            <input type="text" name="new_customer_name" value="{{ old('new_customer_name') }}"
+                                class="form-input" placeholder="Örn: Ahmet Yılmaz" :required="customerType === 'new'">
+                        </div>
+                        <div>
+                            <label class="form-label">Telefon Numarası *</label>
+                            <input type="text" name="new_customer_phone" value="{{ old('new_customer_phone') }}"
+                                class="form-input" placeholder="Örn: 05551234567" :required="customerType === 'new'">
+                        </div>
+                    </div>
+
                     <div>
                         <label class="form-label">Personel *</label>
                         <select name="staff_id" class="form-input" required>
@@ -69,7 +102,7 @@
                         <input type="date" name="appointment_date" value="{{ old('appointment_date', now()->addDay()->format('Y-m-d')) }}"
                             min="{{ now()->format('Y-m-d') }}" class="form-input" required>
                     </div>
-                    <div>
+                    <div class="sm:col-span-2 sm:w-1/2">
                         <label class="form-label">Başlangıç Saati *</label>
                         <input type="time" name="start_time" value="{{ old('start_time','09:00') }}" class="form-input" required>
                     </div>

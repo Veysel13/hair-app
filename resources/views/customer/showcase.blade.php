@@ -10,21 +10,32 @@
 @endif
 <meta property="og:type" content="business.business">
 
-{{-- LocalBusiness Schema.org Structured Data for SEO --}}
+{{-- LocalBusiness / BeautySalon / HairSalon Schema.org Structured Data for SEO --}}
+@php
+    $schemaType = match($business->category) {
+        'hair_salon' => 'HairSalon',
+        'barber' => 'BarberShop',
+        'nail_salon' => 'NailSalon',
+        'spa' => 'DaySpa',
+        'beauty_center' => 'BeautySalon',
+        default => 'BeautySalon'
+    };
+@endphp
 <script type="application/ld+json">
 {
   "{{ '@' }}context": "https://schema.org",
-  "{{ '@' }}type": "BeautySalon",
+  "{{ '@' }}type": "{{ $schemaType }}",
   "name": "{{ $business->name }}",
-  "image": "{{ $business->logo ? asset($business->logo) : asset('default-logo.png') }}",
+  "description": "{{ Str::limit(addslashes($business->description ?? $business->name . ' güzellik ve bakım randevu hizmeti.'), 200) }}",
+  "image": "{{ $business->logo ? asset($business->logo) : asset('icon-512.png') }}",
   "{{ '@' }}id": "{{ url()->current() }}",
   "url": "{{ url()->current() }}",
   "telephone": "{{ $business->phone }}",
   "address": {
     "{{ '@' }}type": "PostalAddress",
-    "streetAddress": "{{ $business->address }}",
-    "addressLocality": "{{ $business->district }}",
-    "addressRegion": "{{ $business->city }}",
+    "streetAddress": "{{ addslashes($business->address) }}",
+    "addressLocality": "{{ addslashes($business->district) }}",
+    "addressRegion": "{{ addslashes($business->city) }}",
     "addressCountry": "TR"
   },
   "geo": {
@@ -32,6 +43,16 @@
     "latitude": "{{ $business->latitude ?? '41.0082' }}",
     "longitude": "{{ $business->longitude ?? '28.9784' }}"
   },
+  "priceRange": "₺₺",
+  @if($business->reviews_count > 0)
+  "aggregateRating": {
+    "{{ '@' }}type": "AggregateRating",
+    "ratingValue": "{{ number_format($business->avg_rating, 1, '.', '') }}",
+    "reviewCount": "{{ $business->reviews_count }}",
+    "bestRating": "5",
+    "worstRating": "1"
+  },
+  @endif
   "openingHoursSpecification": [
     @foreach($business->hours as $h)
     {
@@ -42,6 +63,26 @@
     }{{ !$loop->last ? ',' : '' }}
     @endforeach
   ]
+  @if($business->services && $business->services->count() > 0)
+  ,
+  "hasOfferCatalog": {
+    "{{ '@' }}type": "OfferCatalog",
+    "name": "Hizmet Kataloğu",
+    "itemListElement": [
+      @foreach($business->services->take(10) as $svc)
+      {
+        "{{ '@' }}type": "Offer",
+        "itemOffered": {
+          "{{ '@' }}type": "Service",
+          "name": "{{ addslashes($svc->name) }}"
+        },
+        "price": "{{ number_format($svc->price, 2, '.', '') }}",
+        "priceCurrency": "TRY"
+      }{{ !$loop->last ? ',' : '' }}
+      @endforeach
+    ]
+  }
+  @endif
 }
 </script>
 @endpush

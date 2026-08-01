@@ -1,6 +1,39 @@
 @extends('layouts.customer')
 @section('title', 'Güzellik & Bakım Randevusu')
 
+@push('head')
+<script type="application/ld+json">
+{
+  "{{ '@' }}context": "https://schema.org",
+  "{{ '@' }}graph": [
+    {
+      "{{ '@' }}type": "WebSite",
+      "{{ '@' }}id": "{{ url('/') }}#website",
+      "url": "{{ url('/') }}",
+      "name": "Salonim",
+      "description": "Güzellik & Bakım Randevu Platformu",
+      "inLanguage": "tr-TR",
+      "potentialAction": {
+        "{{ '@' }}type": "SearchAction",
+        "target": "{{ route('search') }}?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    },
+    {
+      "{{ '@' }}type": "Organization",
+      "{{ '@' }}id": "{{ url('/') }}#organization",
+      "name": "Salonim",
+      "url": "{{ url('/') }}",
+      "logo": "{{ asset('icon-512.png') }}",
+      "sameAs": [
+        "https://www.instagram.com/salonimcomtr"
+      ]
+    }
+  ]
+}
+</script>
+@endpush
+
 @section('content')
 <div class="space-y-8 pb-10">
 
@@ -122,41 +155,42 @@
         </div>
 
         {{-- Slider Yön Okları --}}
-        <button @click="prev()" class="absolute left-2 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-black/20 hover:bg-black/40 text-white flex items-center justify-center transition-colors">
+        <button type="button" @click="prev()" aria-label="Önceki Slayt" class="absolute left-2 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-black/25 hover:bg-black/50 text-white flex items-center justify-center transition-colors text-lg font-bold">
             ‹
         </button>
-        <button @click="next()" class="absolute right-2 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-black/20 hover:bg-black/40 text-white flex items-center justify-center transition-colors">
+        <button type="button" @click="next()" aria-label="Sonraki Slayt" class="absolute right-2 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-black/25 hover:bg-black/50 text-white flex items-center justify-center transition-colors text-lg font-bold">
             ›
         </button>
 
         {{-- Slider Göstergeleri (Dots) --}}
-        <div class="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 flex gap-1.5">
-            <template x-for="i in Array.from({length: slidesCount})">
-                <button @click="goTo(arguments[0])" 
-                        :class="activeSlide === arguments[0] ? 'w-4 bg-white' : 'w-1.5 bg-white/40'" 
-                        class="h-1.5 rounded-full transition-all duration-300"></button>
+        <div class="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+            <template x-for="(item, index) in Array.from({length: slidesCount})">
+                <button type="button" @click="goTo(index)" 
+                        :aria-label="'Slayt ' + (index + 1)"
+                        :class="activeSlide === index ? 'w-6 bg-white' : 'w-2 bg-white/40'" 
+                        class="h-2 rounded-full transition-all duration-300 p-2 border-0"></button>
             </template>
         </div>
     </div>
 
     {{-- ── 2. HIZLI ARAMA KATEGORİLERİ ── --}}
     <div>
-        <h3 class="text-sm font-bold text-[#7070a0] uppercase tracking-wider mb-4">Hangi Hizmeti Arıyorsun?</h3>
+        <h3 class="text-sm font-bold text-[#a0a0c0] uppercase tracking-wider mb-4">Hangi Hizmeti Arıyorsun?</h3>
         <div class="grid grid-cols-3 gap-3.5">
             <a href="{{ route('search', ['category' => 'hair_salon']) }}" class="glass-card rounded-2xl p-4 text-center hover:border-purple-500/30 transition-all hover:scale-[1.03] group">
                 <div class="text-4xl mb-2 transition-transform duration-300 group-hover:scale-110">💇‍♀️</div>
                 <p class="text-sm font-bold text-white">Kuaför</p>
-                <p class="text-xs text-[#7070a0] mt-1">Kadın & Erkek</p>
+                <p class="text-xs text-[#a0a0c0] mt-1">Kadın & Erkek</p>
             </a>
             <a href="{{ route('search', ['category' => 'barber']) }}" class="glass-card rounded-2xl p-4 text-center hover:border-purple-500/30 transition-all hover:scale-[1.03] group">
                 <div class="text-4xl mb-2 transition-transform duration-300 group-hover:scale-110">💈</div>
                 <p class="text-sm font-bold text-white">Berber</p>
-                <p class="text-xs text-[#7070a0] mt-1">Erkek Saç Sakal</p>
+                <p class="text-xs text-[#a0a0c0] mt-1">Erkek Saç Sakal</p>
             </a>
             <a href="{{ route('search', ['category' => 'nail_salon']) }}" class="glass-card rounded-2xl p-4 text-center hover:border-purple-500/30 transition-all hover:scale-[1.03] group">
                 <div class="text-4xl mb-2 transition-transform duration-300 group-hover:scale-110">💅</div>
                 <p class="text-sm font-bold text-white">Tırnak Salonu</p>
-                <p class="text-xs text-[#7070a0] mt-1">Protez, Oje</p>
+                <p class="text-xs text-[#a0a0c0] mt-1">Protez, Oje</p>
             </a>
         </div>
     </div>
@@ -166,15 +200,15 @@
         <div class="grid grid-cols-3 divide-x divide-white/5">
             <div class="text-center">
                 <p class="text-2xl font-black gradient-text">4.9</p>
-                <p class="text-[11px] text-[#7070a0] font-bold uppercase tracking-wider mt-1">Müşteri Puanı</p>
+                <p class="text-[11px] text-[#a0a0c0] font-bold uppercase tracking-wider mt-1">Müşteri Puanı</p>
             </div>
             <div class="text-center">
                 <p class="text-2xl font-black gradient-text">5.000+</p>
-                <p class="text-[11px] text-[#7070a0] font-bold uppercase tracking-wider mt-1">Aktif Randevu</p>
+                <p class="text-[11px] text-[#a0a0c0] font-bold uppercase tracking-wider mt-1">Aktif Randevu</p>
             </div>
             <div class="text-center">
                 <p class="text-2xl font-black gradient-text">350+</p>
-                <p class="text-[11px] text-[#7070a0] font-bold uppercase tracking-wider mt-1">Seçkin Salon</p>
+                <p class="text-[11px] text-[#a0a0c0] font-bold uppercase tracking-wider mt-1">Seçkin Salon</p>
             </div>
         </div>
     </div>
@@ -249,7 +283,7 @@
     {{-- ── 5. POPÜLER VE YÜKSEK PUANLI SALONLAR (FEATURED) ── --}}
     <div>
         <div class="flex items-center justify-between mb-4">
-            <h3 class="text-sm font-bold text-[#7070a0] uppercase tracking-wider">Popüler İşletmeler</h3>
+            <h3 class="text-sm font-bold text-[#a0a0c0] uppercase tracking-wider">Popüler İşletmeler</h3>
             <a href="{{ route('search') }}" class="text-xs text-[#e879f9] hover:underline font-bold">Tümünü Gör →</a>
         </div>
         
@@ -276,7 +310,7 @@
                             </svg>
                             <span class="truncate">{{ $business->district }}, {{ $business->city }}</span>
                         </p>
-                        <p class="text-xs text-[#7070a0] mt-2 line-clamp-1 leading-relaxed">{{ $business->description ?? 'Harika saç ve tırnak tasarımları için ziyaret edin.' }}</p>
+                        <p class="text-xs text-[#a0a0c0] mt-2 line-clamp-1 leading-relaxed">{{ $business->description ?? 'Harika saç ve tırnak tasarımları için ziyaret edin.' }}</p>
                     </div>
 
                     <div class="flex items-center justify-between mt-4 gap-2">
@@ -291,7 +325,7 @@
                 </div>
             </div>
             @empty
-            <div class="text-center py-12 text-[#7070a0] text-sm glass-card rounded-2xl md:col-span-2">
+            <div class="text-center py-12 text-[#a0a0c0] text-sm glass-card rounded-2xl md:col-span-2">
                 Öne çıkan işletme bulunamadı.
             </div>
             @endforelse

@@ -58,15 +58,39 @@ class AppointmentController extends Controller
         $business = $this->business();
 
         $data = $request->validate([
-            'customer_id'      => 'required|exists:users,id',
-            'staff_id'         => 'required|exists:staff,id',
-            'appointment_date' => 'required|date|after_or_equal:today',
-            'start_time'       => 'required',
-            'service_ids'      => 'required|array|min:1',
-            'service_ids.*'    => 'exists:services,id',
-            'notes'            => 'nullable|string|max:500',
-            'source'           => 'in:app,phone,walk_in',
+            'customer_type'      => 'required|in:existing,new',
+            'customer_id'        => 'required_if:customer_type,existing|nullable|exists:users,id',
+            'new_customer_name'  => 'required_if:customer_type,new|nullable|string|max:100',
+            'new_customer_phone' => 'required_if:customer_type,new|nullable|string|max:20',
+            'staff_id'           => 'required|exists:staff,id',
+            'appointment_date'   => 'required|date|after_or_equal:today',
+            'start_time'         => 'required',
+            'service_ids'        => 'required|array|min:1',
+            'service_ids.*'      => 'exists:services,id',
+            'notes'              => 'nullable|string|max:500',
+            'source'             => 'in:app,phone,walk_in',
         ]);
+
+        if ($data['customer_type'] === 'new') {
+            // Telefon numarasına göre var olan müşteri var mı kontrol et veya oluştur
+            $cleanPhone = preg_replace('/\s+/', '', $data['new_customer_phone']);
+            $customer = User::where('role', 'customer')
+                ->where('phone', $cleanPhone)
+                ->first();
+
+            if (!$customer) {
+                $customer = User::create([
+                    'name'     => $data['new_customer_name'],
+                    'phone'    => $cleanPhone,
+                    'email'    => $cleanPhone . '@salonim.com.tr',
+                    'password' => \Illuminate\Support\Facades\Hash::make(\Illuminate\Support\Str::random(12)),
+                    'role'     => 'customer',
+                ]);
+            }
+            $customerId = $customer->id;
+        } else {
+            $customerId = $data['customer_id'];
+        }
 
         $services     = Service::whereIn('id', $data['service_ids'])->get();
         $totalDuration= $services->sum('duration_minutes');
@@ -77,7 +101,7 @@ class AppointmentController extends Controller
 
         $appointment = Appointment::create([
             'business_id'      => $business->id,
-            'customer_id'      => $data['customer_id'],
+            'customer_id'      => $customerId,
             'staff_id'         => $data['staff_id'],
             'appointment_date' => $data['appointment_date'],
             'start_time'       => $startTime,
@@ -155,55 +179,61 @@ class AppointmentController extends Controller
     public function checkout(Request $request, Appointment $appointment)
     {
         $request->validate([
-            'payment_method' => 'required|in:cash,card,split,online',
-            'cash_amount'    => 'nullable|numeric|min:0',
-            'card_amount'    => 'nullable|numeric|min:0',
-            'tip_amount'     => 'nullable|numeric|min:0',
-            'internal_notes' => 'nullable|string',
+            'payment_method'  => 'required|in:cash,card,split,online',
+            'cash_amount'     => 'nullable|numeric|min:0',
+            'card_amount'     => 'nullable|numeric|min:0',
+            'tip_amount'      => 'nullable|numeric|min:0',
+            'discount_amount' => 'nullable|numeric|min:0',
+            'internal_notes'  => 'nullable|string',
         ]);
 
-        $paymentMethod = $request->payment_method;
-        $totalPrice    = (float) $appointment->total_price;
-        $cashAmount    = 0.0;
-        $cardAmount    = 0.0;
-        $tipAmount     = (float) ($request->tip_amount ?? 0);
+        $paymentMethod  = $request->payment_method;
+        $originalPrice  = (float) $appointment->total_price;
+        $discountAmount = (float) ($request->discount_amount ?? 0);
+        
+        // Net tahsil edilecek tutar (Hizmet Toplamı - İndirim)
+        $netPrice = max(0, $originalPrice - $discountAmount);
+
+        $cashAmount = 0.0;
+        $cardAmount = 0.0;
+        $tipAmount  = (float) ($request->tip_amount ?? 0);
 
         if ($paymentMethod === 'cash') {
-            $cashAmount = $totalPrice;
+            $cashAmount = $netPrice;
         } elseif ($paymentMethod === 'card') {
-            $cardAmount = $totalPrice;
+            $cardAmount = $netPrice;
         } elseif ($paymentMethod === 'split') {
             $cashAmount = (float) ($request->cash_amount ?? 0);
             $cardAmount = (float) ($request->card_amount ?? 0);
         } else {
-            $cardAmount = $totalPrice;
+            $cardAmount = $netPrice;
         }
 
         $appointment->update([
-            'status'         => 'completed',
-            'payment_method' => $paymentMethod,
-            'cash_amount'    => $cashAmount,
-            'card_amount'    => $cardAmount,
-            'tip_amount'     => $tipAmount,
-            'completed_at'   => now(),
-            'internal_notes' => $request->internal_notes ? $request->internal_notes : $appointment->internal_notes,
+            'status'          => 'completed',
+            'payment_method'  => $paymentMethod,
+            'cash_amount'     => $cashAmount,
+            'card_amount'     => $cardAmount,
+            'tip_amount'      => $tipAmount,
+            'discount_amount' => $discountAmount,
+            'completed_at'    => now(),
+            'internal_notes'  => $request->internal_notes ? $request->internal_notes : $appointment->internal_notes,
         ]);
 
-        // Ödeme kaydı oluştur/güncelle
+        // Ödeme kaydı oluştur/güncelle (Tahsil edilen net tutar + bahşiş)
         \App\Models\Payment::updateOrCreate([
             'appointment_id' => $appointment->id,
         ], [
             'business_id'    => $appointment->business_id,
             'customer_id'    => $appointment->customer_id,
-            'amount'         => $totalPrice + $tipAmount,
+            'amount'         => $netPrice + $tipAmount,
             'type'           => 'full',
             'method'         => $paymentMethod === 'card' ? 'credit_card' : ($paymentMethod === 'split' ? 'cash' : $paymentMethod),
             'status'         => 'completed',
             'paid_at'        => now(),
-            'notes'          => "Adisyon Kapatıldı. Nakit: {$cashAmount}₺, Kart: {$cardAmount}₺, Bahşiş: {$tipAmount}₺",
         ]);
 
-        // Müşteri profili istatistiklerini güncelle
+        // Müşteri profili istatistiklerini güncelle (Gerçekleşen harcama net tutardır)
         $profile = \App\Models\CustomerProfile::firstOrCreate([
             'business_id' => $appointment->business_id,
             'customer_id' => $appointment->customer_id,
@@ -215,10 +245,12 @@ class AppointmentController extends Controller
 
         $profile->update([
             'total_visits' => $completedAppts->count(),
-            'total_spent'  => $completedAppts->sum('total_price'),
-            'last_visit_at'=> now(),
+            'total_spent'  => $completedAppts->get()->sum(function($apt) {
+                return max(0, $apt->total_price - ($apt->discount_amount ?? 0));
+            }),
+            'last_visit_at'=> $completedAppts->max('appointment_date') ?? $profile->last_visit_at,
         ]);
 
-        return back()->with('success', 'Adisyon başarıyla kapatıldı ve ödeme alındı! 💰');
+        return back()->with('success', 'Adisyon başarıyla kapatıldı ve kasaya işlendi.');
     }
 }

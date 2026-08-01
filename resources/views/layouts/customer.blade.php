@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="google-site-verification" content="vBqRirFtTPVGISVJbnc6d5G-akiWU0AczvzyaG1VhdE" />
     <title>@yield('title', 'Salonim') — Saç & Güzellik Randevusu</title>
     <link rel="manifest" href="/manifest.json">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -19,11 +20,11 @@
     {{-- Top Header --}}
     <header class="sticky top-0 z-40 bg-[#0f0f14]/90 backdrop-blur-md border-b border-white/5 h-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between gap-2">
-            <a href="{{ route('home') }}" class="flex items-center gap-2.5 flex-shrink-0">
+            <a href="{{ route('home') }}" aria-label="Salonim Ana Sayfa" class="flex items-center gap-2.5 flex-shrink-0">
                 <div
                     class="w-9 h-9 rounded-xl gradient-brand flex items-center justify-center text-white flex-shrink-0 shadow-md shadow-purple-500/20">
                     <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <circle cx="6" cy="6" r="2.5" />
                         <circle cx="6" cy="18" r="2.5" />
                         <path d="M8.2 7.8L19 18.5" />
@@ -39,13 +40,13 @@
             <div class="flex items-center gap-1.5 sm:gap-3 flex-shrink-0">
                 @auth
                     @if(Auth::user()->role === 'business_owner' || Auth::user()->role === 'admin')
-                        <a href="{{ route('admin.dashboard') }}"
-                            class="text-xs text-[#e879f9] hover:underline font-bold flex items-center gap-1 whitespace-nowrap px-1">
+                        <a href="{{ route('admin.dashboard') }}" aria-label="Yönetim Paneline Git"
+                            class="text-xs text-[#e879f9] hover:underline font-bold flex items-center gap-1 whitespace-nowrap p-2 rounded-lg">
                             ⚙️ <span class="hidden sm:inline">Yönetim Paneli</span><span class="sm:hidden">Panel</span>
                         </a>
                     @endif
-                    <a href="{{ route('customer.dashboard') }}"
-                        class="flex items-center gap-2 hover:bg-white/5 px-2 py-1.5 rounded-xl transition-all whitespace-nowrap">
+                    <a href="{{ route('customer.dashboard') }}" aria-label="Müşteri Paneli"
+                        class="flex items-center gap-2 hover:bg-white/5 px-3 py-2 rounded-xl transition-all whitespace-nowrap min-h-[44px]">
                         <div
                             class="w-7 h-7 rounded-lg gradient-brand flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
                             {{ substr(Auth::user()->name, 0, 1) }}
@@ -53,15 +54,13 @@
                         <span class="text-xs font-semibold text-white hidden sm:inline">{{ Auth::user()->name }}</span>
                     </a>
                 @else
-                    <a href="{{ route('login') }}"
-                        class="text-[11px] sm:text-xs text-[#a0a0c0] hover:text-white transition-colors flex items-center gap-1 font-semibold whitespace-nowrap border border-white/10 px-2 py-1 rounded-lg hover:border-purple-500/30">
+                    <a href="{{ route('login') }}" aria-label="İşletme Salon Girişi"
+                        class="text-[11px] sm:text-xs text-[#a0a0c0] hover:text-white transition-colors flex items-center gap-1 font-semibold whitespace-nowrap border border-white/10 px-2.5 py-1.5 rounded-lg hover:border-purple-500/30 min-h-[38px]">
                         <span>💼</span> <span class="hidden sm:inline">Salon Girişi</span><span
                             class="sm:hidden">İşletme</span>
                     </a>
-                    <a href="{{ route('customer.login') }}"
-                        class="btn btn-secondary btn-sm text-xs whitespace-nowrap py-1.5 px-3">Giriş Yap</a>
-                    <a href="{{ route('customer.register') }}"
-                        class="btn btn-primary btn-sm text-xs whitespace-nowrap hidden md:inline-flex">Kayıt Ol</a>
+                    <a href="{{ route('customer.login') }}" aria-label="Müşteri Girişi" class="btn btn-secondary btn-sm text-xs whitespace-nowrap py-2 px-3.5 min-h-[38px]">Giriş Yap</a>
+                    <a href="{{ route('customer.register') }}" aria-label="Müşteri Kayıt Ol" class="btn btn-primary btn-sm text-xs whitespace-nowrap hidden md:inline-flex py-2 px-3.5 min-h-[38px]">Kayıt Ol</a>
                 @endauth
             </div>
         </div>
@@ -102,42 +101,43 @@
     </main>
 
     {{-- Bottom Navigation Bar for Mobile-style look & feel --}}
-    <nav
+    <nav aria-label="Mobil Gezinme Menüsü"
         class="fixed bottom-0 left-0 right-0 z-40 bg-[#16161f]/95 backdrop-blur-lg border-t border-white/5 h-18 flex items-center justify-around px-4 shadow-2xl">
-        <a href="{{ route('home') }}"
-            class="flex flex-col items-center gap-1.5 text-white/50 hover:text-[#e879f9] transition-all duration-200 {{ request()->routeIs('home') ? 'text-[#e879f9] scale-105 font-bold' : 'font-medium' }}">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <a href="{{ route('home') }}" aria-label="Ana Sayfa"
+            class="flex flex-col items-center justify-center gap-1.5 text-white/50 hover:text-[#e879f9] transition-all duration-200 min-w-[56px] min-h-[48px] p-1 {{ request()->routeIs('home') ? 'text-[#e879f9] scale-105 font-bold' : 'font-medium' }}">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
             </svg>
             <span class="text-[11px] sm:text-xs">Ana Sayfa</span>
         </a>
 
-        <a href="{{ route('search') }}"
-            class="flex flex-col items-center gap-1.5 text-white/50 hover:text-[#e879f9] transition-all duration-200 {{ request()->routeIs('search') ? 'text-[#e879f9] scale-105 font-bold' : 'font-medium' }}">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <a href="{{ route('search') }}" aria-label="Keşfet ve Arama"
+            class="flex flex-col items-center justify-center gap-1.5 text-white/50 hover:text-[#e879f9] transition-all duration-200 min-w-[56px] min-h-[48px] p-1 {{ request()->routeIs('search') ? 'text-[#e879f9] scale-105 font-bold' : 'font-medium' }}">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
             <span class="text-[11px] sm:text-xs">Keşfet</span>
         </a>
 
-        <a href="{{ route('customer.dashboard') }}"
-            class="flex flex-col items-center gap-1.5 text-white/50 hover:text-[#e879f9] transition-all duration-200 {{ request()->routeIs('customer.dashboard') ? 'text-[#e879f9] scale-105 font-bold' : 'font-medium' }}">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <a href="{{ route('customer.dashboard') }}" aria-label="Randevularım"
+            class="flex flex-col items-center justify-center gap-1.5 text-white/50 hover:text-[#e879f9] transition-all duration-200 min-w-[56px] min-h-[48px] p-1 {{ request()->routeIs('customer.dashboard') ? 'text-[#e879f9] scale-105 font-bold' : 'font-medium' }}">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
             <span class="text-[11px] sm:text-xs">Randevularım</span>
         </a>
 
-        <a href="{{ route('customer.profile') }}"
-            class="flex flex-col items-center gap-1.5 text-white/50 hover:text-[#e879f9] transition-all duration-200 {{ request()->routeIs('customer.profile') ? 'text-[#e879f9] scale-105 font-bold' : 'font-medium' }}">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <a href="{{ route('customer.profile') }}" aria-label="Profilim"
+            class="flex flex-col items-center justify-center gap-1.5 text-white/50 hover:text-[#e879f9] transition-all duration-200 min-w-[56px] min-h-[48px] p-1 {{ request()->routeIs('customer.profile') ? 'text-[#e879f9] scale-105 font-bold' : 'font-medium' }}">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>
             <span class="text-[11px] sm:text-xs">Profilim</span>
+        </a>
     </nav>
 
     {{-- PWA Install Banner --}}
@@ -159,17 +159,17 @@
                 <p id="pwa-description" class="text-xs text-[#a0a0c0] mt-1 leading-relaxed">Randevularınızı daha hızlı
                     almak ve anlık bildirimleri takip etmek için ana ekranınıza ekleyin.</p>
             </div>
-            <button onclick="window.dismissPwaBanner()" class="text-[#7070a0] hover:text-white transition-colors">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <button onclick="window.dismissPwaBanner()" aria-label="Kapat" class="text-[#7070a0] hover:text-white transition-colors p-2 rounded-lg min-w-[40px] min-h-[40px]">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
             </button>
         </div>
         <div id="pwa-buttons-container" class="flex items-center gap-2 mt-1">
-            <button onclick="window.dismissPwaBanner()" class="btn btn-secondary text-xs py-2 px-3 flex-1">
+            <button onclick="window.dismissPwaBanner()" aria-label="Daha Sonra Hatırlat" class="btn btn-secondary text-xs py-2.5 px-3 flex-1 min-h-[40px]">
                 Daha Sonra
             </button>
-            <button type="button" id="pwa-install-btn" onclick="window.triggerPwaInstall()" class="btn btn-primary text-xs py-2 px-4 flex-1 font-bold">
+            <button type="button" id="pwa-install-btn" onclick="window.triggerPwaInstall()" aria-label="Uygulamayı Yükle" class="btn btn-primary text-xs py-2.5 px-4 flex-1 font-bold min-h-[40px]">
                 Uygulamayı Yükle 🚀
             </button>
         </div>

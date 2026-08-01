@@ -104,9 +104,21 @@
                     <p class="text-sm font-semibold text-white">{{ number_format($item->price,0,',','.') }} ₺</p>
                 </div>
                 @endforeach
-                <div class="flex items-center justify-between pt-2">
-                    <p class="text-sm font-bold text-white">Toplam</p>
-                    <p class="text-base font-bold gradient-text">{{ number_format($appointment->total_price,0,',','.') }} ₺</p>
+                <div class="space-y-1 pt-2 border-t border-white/5">
+                    <div class="flex items-center justify-between text-xs">
+                        <p class="text-[#7070a0]">Hizmetler Toplamı</p>
+                        <p class="font-medium text-white">{{ number_format($appointment->total_price,2,',','.') }} ₺</p>
+                    </div>
+                    @if($appointment->discount_amount > 0)
+                    <div class="flex items-center justify-between text-xs text-amber-400 font-medium">
+                        <p>✂️ Kasa İndirimi</p>
+                        <p>- {{ number_format($appointment->discount_amount,2,',','.') }} ₺</p>
+                    </div>
+                    @endif
+                    <div class="flex items-center justify-between pt-1">
+                        <p class="text-sm font-bold text-white">Net Tahsil Edilen</p>
+                        <p class="text-base font-bold text-green-400">{{ number_format(max(0, $appointment->total_price - ($appointment->discount_amount ?? 0)),2,',','.') }} ₺</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -284,7 +296,16 @@
     <div class="space-y-4">
 
         {{-- Adisyon Kapatma ve Ödeme Alma Paneli --}}
-        <div class="glass-card rounded-2xl p-6 bg-gradient-to-br from-green-950/40 via-[#161622] to-[#12121a] border border-green-500/30" x-data="{ method: '{{ $appointment->payment_method ?? 'cash' }}' }">
+        <div class="glass-card rounded-2xl p-6 bg-gradient-to-br from-green-950/40 via-[#161622] to-[#12121a] border border-green-500/30"
+             x-data="{ 
+                 method: '{{ $appointment->payment_method ?? 'cash' }}',
+                 totalPrice: {{ $appointment->total_price }},
+                 discountAmount: {{ old('discount_amount', $appointment->discount_amount ?? 0) }},
+                 get netPayable() {
+                     const d = parseFloat(this.discountAmount) || 0;
+                     return Math.max(0, this.totalPrice - d);
+                 }
+             }">
             <div class="flex items-center justify-between gap-2 mb-3">
                 <h3 class="text-sm font-bold text-white flex items-center gap-2">
                     <span>💳</span> Adisyon Kapat & Ödeme Al
@@ -295,7 +316,7 @@
             </div>
 
             <p class="text-xs text-[#a0a0c0] mb-4">
-                Ödeme alma yöntemini seçin, nakit/kart dağılımını ve bahşişi girerek randevuyu tamamlayın.
+                Ödeme alma yöntemini seçin, kasa indirimi ve bahşiş miktarını girerek randevuyu tamamlayın.
             </p>
 
             <form method="POST" action="{{ route('admin.appointments.checkout', $appointment) }}" class="space-y-4">
@@ -330,21 +351,37 @@
                     </div>
                 </div>
 
-                {{-- Bahşiş & Fiş Notu --}}
+                {{-- İndirim & Bahşiş Girdileri --}}
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="form-label text-[11px] text-amber-300 font-bold">✂️ Kasa İndirimi (₺)</label>
+                        <input type="number" name="discount_amount" x-model="discountAmount" step="1" min="0" :max="totalPrice" class="form-input text-xs border-amber-500/30 text-amber-200 focus:border-amber-400" placeholder="Örn: 25">
+                    </div>
                     <div>
                         <label class="form-label text-[11px]">Bahşiş / Tip (₺)</label>
                         <input type="number" name="tip_amount" value="{{ old('tip_amount', $appointment->tip_amount ?? 0) }}" step="1" min="0" class="form-input text-xs" placeholder="Örn: 50">
                     </div>
-                    <div>
-                        <label class="form-label text-[11px]">Fiş / Kasa Notu</label>
-                        <input type="text" name="internal_notes" value="{{ old('internal_notes', $appointment->internal_notes) }}" class="form-input text-xs" placeholder="Örn: Fatura kesildi">
-                    </div>
                 </div>
 
-                <div class="p-3 rounded-xl bg-white/3 border border-white/5 flex items-center justify-between text-xs">
-                    <span class="text-[#a0a0c0]">Ödenecek Hizmet Bedeli:</span>
-                    <span class="text-base font-bold text-green-400">{{ number_format($appointment->total_price, 2, ',', '.') }} ₺</span>
+                <div>
+                    <label class="form-label text-[11px]">Fiş / Kasa Notu</label>
+                    <input type="text" name="internal_notes" value="{{ old('internal_notes', $appointment->internal_notes) }}" class="form-input text-xs" placeholder="Örn: 50 TL nakit indirim yapıldı">
+                </div>
+
+                {{-- Tutar Özeti Hesaplama Kutus --}}
+                <div class="p-3 rounded-xl bg-white/3 border border-white/5 space-y-1.5 text-xs">
+                    <div class="flex items-center justify-between text-[#a0a0c0]">
+                        <span>Hizmetler Toplamı:</span>
+                        <span class="font-semibold text-white">{{ number_format($appointment->total_price, 2, ',', '.') }} ₺</span>
+                    </div>
+                    <div x-show="discountAmount > 0" class="flex items-center justify-between text-amber-400 font-semibold" x-transition>
+                        <span>Kasa İndirimi (-):</span>
+                        <span x-text="'- ' + parseFloat(discountAmount).toLocaleString('tr-TR', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' ₺'">- 0,00 ₺</span>
+                    </div>
+                    <div class="flex items-center justify-between pt-1 border-t border-white/10">
+                        <span class="font-bold text-white">Net Tahsil Edilecek:</span>
+                        <span class="text-base font-extrabold text-green-400" x-text="netPayable.toLocaleString('tr-TR', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' ₺'">{{ number_format($appointment->total_price, 2, ',', '.') }} ₺</span>
+                    </div>
                 </div>
 
                 <button type="submit" class="btn btn-primary w-full py-3 text-xs font-bold bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 shadow-lg shadow-green-600/30">
